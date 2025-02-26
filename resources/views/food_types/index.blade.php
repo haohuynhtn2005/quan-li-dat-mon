@@ -30,17 +30,10 @@
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>Name</th>
+                  <th>Tên</th>
                   <th>Thao tác</th>
                 </tr>
               </thead>
-              <tfoot>
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Thao tác</th>
-                </tr>
-              </tfoot>
               <tbody>
                 @foreach ($foodTypes as $foodType)
                   <tr>

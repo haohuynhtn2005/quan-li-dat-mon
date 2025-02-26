@@ -109,8 +109,8 @@ class FoodItemController extends Controller
     public function destroy(FoodItem $foodItem)
     {
         try {
-            Storage::disk('public')->delete($foodItem->image);
             $foodItem->delete();
+            // Storage::disk('public')->delete($foodItem->image);
             return redirect()->route('food-items.index')->with('success', 'Món ăn đã được xóa!');
         } catch (\Exception $e) {
             return redirect()->route('food-items.index')->with('error', 'Không thể xóa món ăn!');
