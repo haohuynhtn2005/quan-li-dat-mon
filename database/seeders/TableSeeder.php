@@ -15,7 +15,7 @@ class TableSeeder extends Seeder
     {
         for ($i = 1; $i <= 20; $i++) {
             Table::factory()->state([
-                'name' => "Ban {$i}",
+                'name' => "Bàn {$i}",
                 'seats' => rand(2, 6),
             ])->create();
         }

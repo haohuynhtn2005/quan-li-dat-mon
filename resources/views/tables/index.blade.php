@@ -11,7 +11,7 @@
       Danh sách bàn
     </h1>
     <div>
-      <a href="{{ route('table.create') }}"
+      <a href="{{ route('tables.create') }}"
         class="btn btn-sm btn-primary shadow-sm">
         <i class="fas fa-download fa-sm text-white-50"></i>
         Tạo
@@ -48,16 +48,16 @@
                     <td>{{ $table->name }}</td>
                     <td>{{ $table->seats }}</td>
                     <td>
-                      <a href="{{ route('table.edit', $table->id) }}"
-                        class="btn btn-sm btn-primary">Edit</a>
+                      <a href="{{ route('tables.edit', $table->id) }}"
+                        class="btn btn-sm btn-warning">Sửa</a>
                         <form
-                          action="{{ route('table.destroy', $table->id) }}"
+                          action="{{ route('tables.destroy', $table->id) }}"
                           method="POST"
                           class="d-inline"
                           >
                           @method('DELETE')
                           @csrf
-                          <button class="btn btn-sm btn-danger">Delete</button>
+                          <button class="btn btn-sm btn-danger">Xóa</button>
                         </form>
                     </td>
                   </tr>

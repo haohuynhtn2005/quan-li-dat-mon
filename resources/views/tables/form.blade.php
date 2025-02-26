@@ -25,13 +25,13 @@
 
       <!-- Form chỉnh sửa -->
       @if ($mode == 'create')
-        <form action="{{ route('table.store') }}" method="POST">
+        <form action="{{ route('tables.store') }}" method="POST">
       @elseif ($mode == 'update')
-        <form action="{{ route('table.update', $table->id) }}"
+        <form action="{{ route('tables.update', $table->id) }}"
           method="POST">
         @method('PUT')
       @else
-        <form action="{{ route('table.destroy', $table->id) }}"
+        <form action="{{ route('tables.destroy', $table->id) }}"
           method="POST">
         @method('DELETE')
       @endif
@@ -75,7 +75,7 @@
 
       <!-- Nút hành động -->
       <button type="submit" class="btn btn-primary">Ok</button>
-      <a href="{{ route('table.index') }}" class="btn btn-secondary">
+      <a href="{{ route('tables.index') }}" class="btn btn-secondary">
         Quay lại
       </a>
       </form>

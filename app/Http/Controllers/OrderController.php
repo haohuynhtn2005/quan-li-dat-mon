@@ -2,74 +2,93 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Customer;
-use App\Models\Employee;
 use App\Models\Order;
 use App\Models\Table;
+use App\Models\User;
 use Illuminate\Http\Request;
 
-class OrderController extends Controller {
-    public function index() {
-        $orders = Order::get();
-        return view('order.index')->with('orders', $orders);
+class OrderController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        $orders = Order::with(['user', 'table'])->latest()->paginate(10);
+        return view('orders.index', compact('orders'));
     }
 
-    public function create() {
-        $employees = Employee::get();
-        $customers = Customer::get();
-        $tables = Table::get();
-        return view('order.create')->with('customers', $customers)->with('tables', $tables)->with('employees', $employees);
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        $users = User::all();
+        $tables = Table::all();
+        return view('orders.form', compact('users', 'tables'));
     }
 
-    public function store(Request $request) {
-        // Validation cho 'ten-phong-ban'
-        $validatedData = $request->validate([
-            'tableId' => 'required',
-        ], [
-            'tableId.required' => 'Bàn là bắt buộc.',
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'table_id' => 'required|exists:tables,id',
+            'discount' => 'numeric|min:0',
         ]);
 
-        // Sử dụng model để thêm dữ liệu
-        Order::create([
-            'employee_id' => $request->input('employeeId'),
-            'customer_id' => $request->input('customerId'),
-            'table_id' => $validatedData['tableId'],
+        Order::create($request->all());
+
+        return redirect()->route('orders.index')->with('success', 'Order created successfully.');
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Order $order)
+    {
+        $users = User::all();
+        $tables = Table::all();
+        return view('orders.edit', compact('order', 'users', 'tables'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Order $order)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'table_id' => 'required|exists:tables,id',
+            'paid' => 'boolean',
+            'discount' => 'numeric|min:0',
         ]);
 
-        return redirect()->route('order.index')->with('success', 'Thêm đơn hàng thành công.');
+        $order->update($request->all());
+
+        return redirect()->route('orders.index')->with('success', 'Order updated successfully.');
     }
-     // Hiển thị form chỉnh sửa đơn hàng
-     public function edit($id)
-     {
-         $order = Order::findOrFail($id);
-         $customers = Customer::all();
-         $employees = Employee::all();
-         $tables = Table::get();
-         return view('order.edit', compact('order', 'customers', 'employees', 'tables'));
-     }
 
-     // Cập nhật thông tin đơn hàng
-     public function update(Request $request, $id)
-     {
-         $request->validate([
-             'customer_id' => 'required|exists:customers,id',
-             'employee_id' => 'required|exists:employees,id',
-             'table_id' => 'required|string|max:255',
-         ]);
-
-         $order = Order::findOrFail($id);
-         $order->update($request->all());
-
-         return redirect()->route('order.index')->with('success', 'Đơn hàng đã được cập nhật thành công!');
-     }
-
-     // Xóa đơn hàng
-     public function destroy($id)
-     {
-         $order = Order::findOrFail($id);
-         $order->delete();
-
-         return redirect()->route('order.index')->with('success', 'Đơn hàng đã được xóa!');
-     }
- }
-
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Order $order)
+    {
+        try {
+            $order->delete();
+            return redirect()->route('orders.index')->with('success', 'Order deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('orders.index')->with('error', 'Error deleting order.');
+        }
+    }
+}

@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
       TableSeeder::class,
       FoodTypeSeeder::class,
       FoodItemSeeder::class,
+      OrderSeeder::class,
     ]);
 
     // // Seed Departments

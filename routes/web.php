@@ -41,8 +41,10 @@ Route::middleware(['auth', 'verified', 'role:staff,admin'])->prefix('manage')->g
         return view('layouts.dash');
     })->name('manage.dashboard');
 
+    Route::resource('tables', TableController::class);
     Route::resource('food-types', FoodTypeController::class);
     Route::resource('food-items', FoodItemController::class);
+    Route::resource('orders', OrderController::class);
 
     Route::get('/department', [DepartmentController::class, 'index'])->name('department.index');
     Route::get('/department/create', [DepartmentController::class, 'create'])->name('department.create');
@@ -64,20 +66,6 @@ Route::middleware(['auth', 'verified', 'role:staff,admin'])->prefix('manage')->g
     Route::get('/customer/edit/{id}', [CustomerController::class, 'edit'])->name('customer.edit');
     Route::put('/customer/{id}', [CustomerController::class, 'update'])->name('customer.update');
     Route::delete('/customer/{id}', [CustomerController::class, 'destroy'])->name('customer.destroy');
-
-    Route::get('/table', [TableController::class, 'index'])->name('table.index');
-    Route::get('/table/create', [TableController::class, 'create'])->name('table.create');
-    Route::post('/table', [TableController::class, 'store'])->name('table.store');
-    Route::get('/table/edit/{id}', [TableController::class, 'edit'])->name('table.edit');
-    Route::put('/table/{id}', [TableController::class, 'update'])->name('table.update');
-    Route::delete('/table/{id}', [TableController::class, 'destroy'])->name('table.destroy');
-
-    Route::get('/order', [OrderController::class, 'index'])->name('order.index');
-    Route::get('/order/create', [OrderController::class, 'create'])->name('order.create');
-    Route::post('/order/store', [OrderController::class, 'store'])->name('order.store');
-    Route::get('/order/{id}/edit', [OrderController::class, 'edit'])->name('order.edit'); // Hiển thị form sửa đơn hàng
-    Route::put('/order/{id}', [OrderController::class, 'update'])->name('order.update'); // Cập nhật thông tin đơn hàng
-    Route::delete('/order/{id}', [OrderController::class, 'destroy'])->name('order.destroy'); // Xóa đơn hàng
 });
 
 Route::get('/invoice', [InvoiceController::class, 'index'])->name('invoice.index');

@@ -51,7 +51,7 @@ return new class extends Migration {
     });
     Schema::create('orders', function (Blueprint $table) {
       $table->id();
-      $table->foreignId('user_id')->constrained('users');
+      $table->foreignId('user_id')->nullable()->constrained('users');
       $table->foreignId('table_id')->constrained('tables');
       $table->boolean('paid')->default(false);
       $table->decimal('discount')->default(0);
@@ -63,7 +63,7 @@ return new class extends Migration {
       $table->foreignId('food_item_id')->constrained('food_items');
       $table->integer('quantity');
       $table->decimal('price', 10, 2);
-      $table->enum('status', ['cooking', 'cooked', 'serverd', 'cancelled'])->default('cooking');
+      $table->enum('status', ['chuẩn bị', 'đã nấu', 'đã ra', 'đã hủy'])->default('chuẩn bị');
       $table->timestamps();
     });
 

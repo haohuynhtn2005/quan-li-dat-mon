@@ -9,11 +9,11 @@ use Illuminate\Validation\ValidationException;
 class TableController extends Controller {
   public function index() {
     $tables = Table::get();
-    return view('table.index')->with('tables', $tables);
+    return view('tables.index')->with('tables', $tables);
   }
 
   public function create() {
-    return view('table.form', [
+    return view('tables.form', [
       'mode' => 'create',
     ]);
   }
@@ -38,19 +38,17 @@ class TableController extends Controller {
       'seats' => $validatedData['seats'],
     ]);
 
-    return redirect()->route('table.index')->with('success', 'Đặt bàn đã được thêm thành công.');
+    return redirect()->route('tables.index')->with('success', 'Đặt bàn đã được thêm thành công.');
   }
 
-  public function edit($id) {
-    $table = Table::findOrFail($id);
-    return view('table.form', [
+  public function edit(Table $table) {
+    return view('tables.form', [
       'mode' => 'update',
       'table' => $table,
     ]);
   }
 
-  public function update(Request $request, $id) {
-    // Xác thực dữ liệu
+  public function update(Request $request, Table $table) {
     $request->validate([
       'name' => 'required|string|max:255',
       'seats' => 'required|integer|min:1|max:100',
@@ -64,31 +62,29 @@ class TableController extends Controller {
       'seats.max' => 'Số ghế không được vượt quá 100.',
     ]);
 
-    $table = Table::findOrFail($id);
     $table->update([
       'name' => $request->input('name'),
       'seats' => $request->input('seats'),
     ]);
 
-    return redirect()->route('table.index')->with('success', 'Cập nhật thông tin thành công!');
+    return redirect()->route('tables.index')->with('success', 'Cập nhật thông tin thành công!');
   }
 
   public function renderDelete($id) {
     $table = Table::findOrFail($id);
-    return view('table.form', [
+    return view('tables.form', [
       'mode' => 'delete',
       'table' => $table,
     ]);
   }
 
-  public function destroy($id) {
-    $table = Table::findOrFail($id);
+  public function destroy(Table $table) {
     try {
       $table->delete();
     } catch (\Exception $e) {
-      return redirect()->route('table.index')->with(['err' => 'Không thể xóa']);
+      return redirect()->route('tables.index')->with(['err' => 'Không thể xóa']);
     }
-    return redirect()->route('table.index')->with('success', 'Xóa thông tin thành công!');
+    return redirect()->route('tables.index')->with('success', 'Xóa thông tin thành công!');
   }
 
 }
