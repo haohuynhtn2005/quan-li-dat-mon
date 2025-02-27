@@ -8,7 +8,7 @@
   <!-- Page Heading -->
   <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">
-      <a href="{{ route('food-items.index') }}">
+      <a href="{{ route('orders.index') }}">
         @if ($mode == 'create')
           Thêm
         @elseif ($mode == 'update')
@@ -16,7 +16,7 @@
         @else
           Xóa
         @endif
-        món ăn
+        đơn hàng
       </a>
     </h1>
   </div>
@@ -28,82 +28,68 @@
         switch ($mode) {
           case 'update':
             $form = [
-              'action' => route('food-items.update', $foodItem),
+              'action' => route('orders.update', $order),
               'method' => 'PATCH',
             ];
             break;
           default:
             $form = [
-              'action' => route('food-items.store'),
+              'action' => route('orders.store'),
               'method' => 'POST',
             ];
             break;
         }
       @endphp
       <!-- Form chỉnh sửa -->
-      <form action="{{ $form['action'] }}" method="POST" enctype="multipart/form-data">
+      <form action="{{ $form['action'] }}" method="POST">
       @method($form['method'])
       @csrf
-      
-      <div class="mb-3">
-        <label for="name" class="form-label">
-          Tên món
-        </label>
-        <input type="text" name="name" id="name"
-          class="form-control @error('name') is-invalid @enderror"
-          @isset($foodItem)
-            value="{{ old('name', $foodItem->name) }}"
-          @endisset
-          value="{{ old('name') }}">
-        @error('name')
-          <div class="invalid-feedback">
-            {{ $message }}
-          </div>
-        @enderror
-      </div>
 
       <div class="mb-3">
-        <label for="image" class="form-label">
-          Hình
-        </label>
-        <input type="file" name="image" id="image"
-          class="form-control-file @error('image') is-invalid @enderror"
-          @isset($foodItem)
-            value="{{ old('image', $foodItem->image) }}"
-          @endisset
-          value="{{ old('image') }}">
-        @error('image')
-          <div class="invalid-feedback">
-            {{ $message }}
-          </div>
-        @enderror
-        @if (isset($foodItem) && $foodItem->image)
-        <img src="{{ asset('storage/' . $foodItem->image) }}" alt=""
-          style="width: 2em; aspect-ratio: 1; object-fit:contain">
-        @endif
-      </div>
-      
-
-      <div class="mb-3">
-        <label for="food_type_id" class="form-label">
-          Loại món
+        <label for="table_id" class="form-label">
+          Bàn
         </label>
         <select 
-          name="food_type_id" 
-          id="food_type_id"
-          @isset($foodItem)
-            value="{{ old('food_type_id', $foodItem->food_type_id) }}"
-          @endisset
-          value="{{ old('food_type_id') }}"
-          class="form-control @error('food_type_id') is-invalid @enderror"
+          name="table_id" 
+          id="table_id"
+          class="form-control @error('table_id') is-invalid @enderror"
           required>
-          @foreach($foodTypes as $foodType)
-              <option value="{{ $foodType->id }}">
-                  {{ $foodType->name }}
+          @foreach($tables as $table)
+              <option value="{{ $table->id }}"
+                @if (isset($order) && old('table_id', $order->table_id) == $table->id)
+                  selected
+                @endif>
+                  {{ $table->name }}
               </option>
           @endforeach
         </select>
-        @error('food_type_id')
+        @error('table_id')
+          <div class="invalid-feedback">
+            {{ $message }}
+          </div>
+        @enderror
+      </div>
+      
+
+      <div class="mb-3">
+        <label for="user_id" class="form-label">
+          Khách
+        </label>
+        <select 
+          name="user_id" 
+          id="user_id"
+          class="form-control @error('user_id') is-invalid @enderror"
+          required>
+          @foreach($users as $user)
+              <option value="{{ $user->id }}"
+                @if (isset($order) && old('user_id', $order->user_id) == $user->id)
+                  selected
+                @endif>
+                  {{ $user->name }}
+              </option>
+          @endforeach
+        </select>
+        @error('user_id')
           <div class="invalid-feedback">
             {{ $message }}
           </div>
@@ -111,39 +97,44 @@
       </div>
 
       <div class="mb-3">
-        <label for="price" class="form-label">
-          Giá
+        <label for="discount" class="form-label">
+          Giảm giá
         </label>
-        <input type="number" name="price" id="price"
-          class="form-control @error('price') is-invalid @enderror"
-          @isset($foodItem)
-            value="{{ old('price', $foodItem->price) }}"
+        <input type="number" name="discount" id="discount"
+          class="form-control @error('discount') is-invalid @enderror"
+          @isset($order)
+            value="{{ old('discount', $order->discount) }}"
           @endisset
-          value="{{ old('price') }}">
-        @error('price')
+          value="{{ old('discount', '0') }}">
+        @error('discount')
           <div class="invalid-feedback">
             {{ $message }}
           </div>
         @enderror
       </div>
 
-      <div class="mb-3">
-        <label for="description" class="form-label">
-          Mô tả
-        </label>
-        <textarea name="description" id="description"
-          class="form-control @error('price') is-invalid @enderror" cols="30" rows="10"
-          >{{isset($foodItem) ? old('description', $foodItem->description) : old('description') }}</textarea>
-        @error('description')
+
+      @if ($mode == 'update')
+      <div class="form-group">
+        <div class="custom-control custom-checkbox">
+            <input type="checkbox" name="paid" id="paid" value="1"
+              @if ($order->paid)
+                checked
+              @endif
+              class="custom-control-input">
+            <label class="custom-control-label" for="paid">Đã thanh toán</label>
+        </div>
+        @error('paid')
           <div class="invalid-feedback">
             {{ $message }}
           </div>
         @enderror
       </div>
+      @endif
 
       <!-- Nút hành động -->
       <button type="submit" class="btn btn-primary">Ok</button>
-      <a href="{{ route('food-items.index') }}" class="btn btn-secondary">
+      <a href="{{ route('orders.index') }}" class="btn btn-secondary">
         Quay lại
       </a>
       </form>

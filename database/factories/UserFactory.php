@@ -23,7 +23,7 @@ class UserFactory extends Factory
             'email' => $this->faker->unique()->safeEmail(),
             'phone' => $this->faker->numerify('0#########'), // Generates a 10-digit Vietnamese-style phone number
             'email_verified_at' => now(),
-            'password' => Hash::make('password'), // Default password: "password",
+            'password' => Hash::make(1234), // Default password: "password",
             'role' => 'user',
             'remember_token' => \Str::random(10),
         ];

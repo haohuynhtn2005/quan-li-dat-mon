@@ -22,8 +22,8 @@ class OrderDetailFactory extends Factory
             'order_id' => Order::inRandomOrder()->first()?->id ?? Order::factory(),
             'food_item_id' => FoodItem::inRandomOrder()->first()?->id ?? FoodItem::factory(),
             'quantity' => fake()->numberBetween(1, 5),
-            'price' => fake()->randomFloat(2, 10, 500), // Price between 10 - 500
-            'status' => fake()->randomElement(['chuẩn bị', 'đã nấu', 'đã ra', 'đã hủy']),
+            'price' => fake()->randomFloat(0, 2, 1000) * 1000,
+            'status' => fake()->randomElement(['chuẩn bị', 'đã nấu', 'đã ra']),
         ];
     }
 }

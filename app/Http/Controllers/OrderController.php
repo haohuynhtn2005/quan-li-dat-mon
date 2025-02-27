@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FoodItem;
 use App\Models\Order;
+use App\Models\OrderDetail;
 use App\Models\Table;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -23,9 +25,10 @@ class OrderController extends Controller
      */
     public function create()
     {
-        $users = User::all();
+        $users = User::where('role', '=', 'user')->get();
         $tables = Table::all();
-        return view('orders.form', compact('users', 'tables'));
+        $mode = 'create';
+        return view('orders.form', compact('mode', 'users', 'tables'));
     }
 
     /**
@@ -36,7 +39,7 @@ class OrderController extends Controller
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'table_id' => 'required|exists:tables,id',
-            'discount' => 'numeric|min:0',
+            'discount' => 'numeric|min:0|max:100',
         ]);
 
         Order::create($request->all());
@@ -47,9 +50,10 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Order $order)
     {
-        //
+        $foodItems = FoodItem::all();
+        return view('orders.show', compact('order', 'foodItems'));
     }
 
     /**
@@ -57,9 +61,10 @@ class OrderController extends Controller
      */
     public function edit(Order $order)
     {
-        $users = User::all();
+        $users = User::where('role', '=', 'user')->get();
         $tables = Table::all();
-        return view('orders.edit', compact('order', 'users', 'tables'));
+        $mode = 'update';
+        return view('orders.form', compact('mode', 'order', 'users', 'tables'));
     }
 
     /**
@@ -70,11 +75,13 @@ class OrderController extends Controller
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'table_id' => 'required|exists:tables,id',
-            'paid' => 'boolean',
             'discount' => 'numeric|min:0',
         ]);
 
-        $order->update($request->all());
+        $order->update([
+            'paid' => $request->has('paid'),
+            ...$request->all(),
+        ]);
 
         return redirect()->route('orders.index')->with('success', 'Order updated successfully.');
     }
@@ -90,5 +97,48 @@ class OrderController extends Controller
         } catch (\Exception $e) {
             return redirect()->route('orders.index')->with('error', 'Error deleting order.');
         }
+    }
+
+    public function addOrderDetail(Request $request, Order $order)
+    {
+        $request->validate([
+            'food_item_id' => 'required|exists:food_items,id',
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        $foodItem = FoodItem::findOrFail($request->food_item_id);
+
+        OrderDetail::create([
+            'order_id' => $order->id,
+            'food_item_id' => $request->food_item_id,
+            'quantity' => $request->quantity,
+            'price' => $foodItem->price,
+            'status' => 'chuẩn bị',
+        ]);
+
+        return redirect()->route('orders.show', $order->id)->with('success', 'Order detail added successfully.');
+    }
+
+    public function updateOrderDetailStatus(Request $request, OrderDetail $orderDetail)
+    {
+        $request->validate([
+            'status' => 'required|in:chuẩn bị,đã nấu,đã ra,đã hủy',
+        ]);
+
+        $orderDetail->update([
+            'status' => $request->status,
+        ]);
+
+        return redirect()->back()->with('success', 'Order detail status updated successfully.');
+    }
+
+    public function removeOrderDetail(OrderDetail $orderDetail)
+    {
+        if ($orderDetail->status === 'đã ra') {
+            return redirect()->back()->with('error', 'Không thể xóa vì món đã được phục vụ.');
+        }
+        $orderDetail->delete();
+
+        return redirect()->back()->with('success', 'Chi tiết đơn hàng đã được xóa.');
     }
 }

@@ -41,7 +41,10 @@ class FoodItemController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        $imagePath = $request->file('image')->store('food_images', 'public');
+        $imagePath = '';
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('food_images', 'public');
+        }
 
         FoodItem::create([
             'name' => $request->name,
