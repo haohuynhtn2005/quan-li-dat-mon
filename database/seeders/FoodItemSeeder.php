@@ -41,11 +41,11 @@ class FoodItemSeeder extends Seeder
             // Món xào (Stir-fried dishes)
             3 => [
                 [
-                    'name' => 'Mì Xào Hải Sản',
+                    'name' => 'Mì xào hải sản',
                     'image' => 'mi-xao-hai-san.jpg',
                 ],
                 [
-                    'name' => 'Rau Muống Xào Tỏi',
+                    'name' => 'Rau muống xào tỏi',
                     'image' => 'rau-muong-xao-toi.jpg',
                 ],
             ],
@@ -53,11 +53,11 @@ class FoodItemSeeder extends Seeder
             // Hải sản (Seafood)
             4 => [
                 [
-                    'name' => 'Ghẹ Hấp Bia',
+                    'name' => 'Ghẹ hấp bia',
                     'image' => 'ghe-hap-bia.jpg',
                 ],
                 [
-                    'name' => 'Mực Nướng Muối Ớt',
+                    'name' => 'Mực nướng muối ớt',
                     'image' => 'muc-nuong-muoi-ot.jpg',
                 ],
             ],

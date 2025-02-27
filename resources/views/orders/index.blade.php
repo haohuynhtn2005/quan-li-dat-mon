@@ -8,12 +8,12 @@
   <!-- Page Heading -->
   <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">
-      <a href="{{ route('food-items.index') }}">
+      <a href="{{ route('orders.index') }}">
         Đơn hàng
       </a>
     </h1>
     <div>
-      <a href="{{ route('food-items.create') }}"
+      <a href="{{ route('orders.create') }}"
         class="btn btn-sm btn-primary shadow-sm">
         <i class="fas fa-upload fa-sm text-white-50"></i>
         Tạo
@@ -46,7 +46,9 @@
             <td>
               <a href="{{ route('orders.edit', $order) }}"
                 class="btn btn-sm btn-warning">Sửa</a>
-              <form
+              <a href="{{ route('orders.show', $order) }}"
+                class="btn btn-sm btn-info">Đặt món</a>
+              {{-- <form
                 action="{{ route('orders.destroy', $order) }}"
                 method="POST"
                 class="d-inline"
@@ -54,7 +56,7 @@
                 @method('DELETE')
                 @csrf
                 <button class="btn btn-sm btn-danger">Xóa</button>
-              </form>
+              </form> --}}
             </td>
           </tr>
         @endforeach

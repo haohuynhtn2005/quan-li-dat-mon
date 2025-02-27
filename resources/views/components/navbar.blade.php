@@ -26,7 +26,7 @@
         @auth
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Tài khoản
+              {{ auth()->user()->name }}
             </a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Hồ sơ</a></li>

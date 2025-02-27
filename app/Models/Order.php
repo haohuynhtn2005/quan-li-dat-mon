@@ -13,6 +13,7 @@ class Order extends Model
         'user_id',
         'table_id',
         'discount',
+        'paid',
     ];
 
     public function user()

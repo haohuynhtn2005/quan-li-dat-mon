@@ -45,7 +45,7 @@ return new class extends Migration {
       $table->string('name');
       $table->string('image')->nullable();
       $table->foreignId('food_type_id')->constrained('food_types');
-      $table->decimal('price', 10, 2);
+      $table->bigInteger('price');
       $table->text('description')->nullable();
       $table->timestamps();
     });
@@ -62,8 +62,8 @@ return new class extends Migration {
       $table->foreignId('order_id')->constrained('orders');
       $table->foreignId('food_item_id')->constrained('food_items');
       $table->integer('quantity');
-      $table->decimal('price', 10, 2);
-      $table->enum('status', ['chuẩn bị', 'đã nấu', 'đã ra', 'đã hủy'])->default('chuẩn bị');
+      $table->bigInteger('price');
+      $table->enum('status', ['chuẩn bị', 'đã nấu', 'đã ra'])->default('chuẩn bị');
       $table->timestamps();
     });
 
