@@ -30,12 +30,32 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'phone' => ['required', 'regex:/^0\d{9,10}$/'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        $request->validate(
+            [
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+                'phone' => ['required', 'regex:/^0\d{9,10}$/'],
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            ],
+            [
+                'name.required' => 'Tên không được để trống.',
+                'name.string' => 'Tên phải là một chuỗi ký tự.',
+                'name.max' => 'Tên không được vượt quá 255 ký tự.',
+
+                'email.required' => 'Email không được để trống.',
+                'email.string' => 'Email phải là một chuỗi ký tự.',
+                'email.lowercase' => 'Email phải viết thường.',
+                'email.email' => 'Email không hợp lệ.',
+                'email.max' => 'Email không được vượt quá 255 ký tự.',
+                'email.unique' => 'Email đã tồn tại.',
+
+                'phone.required' => 'Số điện thoại không được để trống.',
+                'phone.regex' => 'Số điện thoại phải có 10 đến 11 số bắt đầu bằng 0 ',
+
+                'password.required' => 'Mật khẩu không được để trống.',
+                'password.confirmed' => 'Xác nhận mật khẩu không khớp.',
+            ]
+        );
 
         $user = User::create([
             'name' => $request->name,
