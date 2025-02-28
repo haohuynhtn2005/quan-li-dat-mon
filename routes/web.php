@@ -50,8 +50,14 @@ Route::middleware(['auth', 'verified', 'role:staff,admin'])->prefix('manage')->g
     Route::get('/orders/{order}/edit', [OrderController::class, 'edit'])->name('orders.edit');
     Route::put('/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
     Route::patch('/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
+
+    Route::put('/orders/update-paid/{order}', [OrderController::class, 'updatePaid'])->name('orders.updatePaid');
+    Route::patch('/orders/update-paid/{order}', [OrderController::class, 'updatePaid'])->name('orders.updatePaid');
+    
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::post('/orders/{order}/details', [OrderController::class, 'addOrderDetail'])->name('orders.addDetail');
+    Route::put('/order-details/{orderDetail}/status', [OrderController::class, 'updateOrderDetailStatus'])
+        ->name('order-details.updateStatus');
     Route::patch('/order-details/{orderDetail}/status', [OrderController::class, 'updateOrderDetailStatus'])
         ->name('order-details.updateStatus');
     Route::delete('/order-details/{orderDetail}', [OrderController::class, 'removeOrderDetail'])

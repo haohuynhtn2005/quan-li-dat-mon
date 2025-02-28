@@ -34,7 +34,7 @@ class Order extends Model
     public function getTotalAttribute()
     {
         return $this->orderDetails()
-            ->where('status', '!=', 'chuẩn bị')
+            // ->where('status', '!=', 'chuẩn bị')
             ->sum(\DB::raw('quantity * price'));
     }
 }

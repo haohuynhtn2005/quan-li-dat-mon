@@ -79,7 +79,8 @@
           name="user_id" 
           id="user_id"
           class="form-control @error('user_id') is-invalid @enderror"
-          required>
+          >
+          <option value="">Khách vãng lai</option>
           @foreach($users as $user)
               <option value="{{ $user->id }}"
                 @if (isset($order) && old('user_id', $order->user_id) == $user->id)
@@ -134,9 +135,6 @@
 
       <!-- Nút hành động -->
       <button type="submit" class="btn btn-primary">Ok</button>
-      <a href="{{ route('orders.index') }}" class="btn btn-secondary">
-        Quay lại
-      </a>
       </form>
     </div>
   </div>
