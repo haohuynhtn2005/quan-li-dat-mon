@@ -26,12 +26,12 @@ class UserSeeder extends Seeder
             'role' => 'staff',
             'password' => Hash::make('1234'),
         ])->create();
-        User::factory()->state([
-            'name' => 'Khách vãng lai',
-            'email' => 'khachvanglai@mail.com',
-            'role' => 'user',
-            'password' => Hash::make('1234'),
-        ])->create();
+        // User::factory()->state([
+        //     'name' => 'Khách vãng lai',
+        //     'email' => 'khachvanglai@mail.com',
+        //     'role' => 'user',
+        //     'password' => Hash::make('1234'),
+        // ])->create();
         User::factory()->state([
             'name' => 'User 01',
             'email' => 'user01@mail.com',

@@ -52,8 +52,10 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
+        $users = User::where('role', '=', 'user')->get();
+        $tables = Table::all();
         $foodItems = FoodItem::all();
-        return view('orders.show', compact('order', 'foodItems'));
+        return view('orders.show', compact('order', 'users', 'tables', 'foodItems'));
     }
 
     /**
@@ -73,11 +75,10 @@ class OrderController extends Controller
     public function update(Request $request, Order $order)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'user_id' => 'nullable|exists:users,id',
             'table_id' => 'required|exists:tables,id',
             'discount' => 'numeric|min:0',
         ]);
-
         $order->update([
             'paid' => $request->has('paid'),
             ...$request->all(),
@@ -98,6 +99,13 @@ class OrderController extends Controller
             return redirect()->route('orders.index')->with('error', 'Error deleting order.');
         }
     }
+
+    public function updatePaid(Request $request, Order $order)
+    {
+        $order->update(['paid' => $request->has('paid')]);
+        return redirect()->route('orders.index')->with('success', 'Payment status updated successfully.');
+    }
+
 
     public function addOrderDetail(Request $request, Order $order)
     {
