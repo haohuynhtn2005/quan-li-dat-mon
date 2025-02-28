@@ -37,7 +37,7 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'user_id' => 'nullable|exists:users,id',
             'table_id' => 'required|exists:tables,id',
             'discount' => 'numeric|min:0|max:100',
         ]);
