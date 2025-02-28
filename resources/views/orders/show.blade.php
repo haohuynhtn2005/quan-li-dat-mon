@@ -15,7 +15,7 @@
   </div>
 
   <!-- Order Information -->
-  <div class="card mb-3">
+  <div class="card mb-3 d-none">
     <div class="card-body">
       <p><strong>User:</strong> {{ $order->user->name ?? 'Guest' }}</p>
       <p><strong>Table:</strong> {{ $order->table->name }}</p>
@@ -24,101 +24,9 @@
     </div>
   </div>
 
-  <div class="card mb-3 d-none">
-    <div class="card-body">
-      <!-- Form chỉnh sửa -->
-      <form action="{{ route('orders.update', $order) }}" method="POST" class="d-inline">
-        @method('PATCH')
-        @csrf
-
-        <div class="mb-3">
-          <label for="table_id" class="form-label">
-            Bàn
-          </label>
-          <select
-            name="table_id"
-            id="table_id"
-            class="form-control @error('table_id') is-invalid @enderror"
-            required>
-            @foreach($tables as $table)
-                <option value="{{ $table->id }}"
-                  @if (isset($order) && old('table_id', $order->table_id) == $table->id)
-                    selected
-                  @endif>
-                    {{ $table->name }}
-                </option>
-            @endforeach
-          </select>
-          @error('table_id')
-            <div class="invalid-feedback">
-              {{ $message }}
-            </div>
-          @enderror
-        </div>
-
-        <div class="mb-3">
-          <label for="user_id" class="form-label">
-            Khách
-          </label>
-          <select
-            name="user_id"
-            id="user_id"
-            class="form-control @error('user_id') is-invalid @enderror"
-            >
-            <option value="">Khách vãng lai</option>
-            @foreach($users as $user)
-                <option value="{{ $user->id }}"
-                  @if (isset($order) && old('user_id', $order->user_id) == $user->id)
-                    selected
-                  @endif>
-                    {{ $user->name }}
-                </option>
-            @endforeach
-          </select>
-          @error('user_id')
-            <div class="invalid-feedback">
-              {{ $message }}
-            </div>
-          @enderror
-        </div>
-
-        <div class="mb-3">
-          <label for="discount" class="form-label">
-            Giảm giá
-          </label>
-          <input type="number" name="discount" id="discount"
-            class="form-control @error('discount') is-invalid @enderror"
-            @isset($order)
-              value="{{ old('discount', $order->discount) }}"
-            @endisset
-            value="{{ old('discount', '0') }}">
-          @error('discount')
-            <div class="invalid-feedback">
-              {{ $message }}
-            </div>
-          @enderror
-        </div>
-
-        <div class="form-group">
-          <div class="custom-control custom-checkbox">
-              <input type="checkbox" name="paid" id="paid" value="1"
-                @if ($order->paid)
-                  checked
-                @endif
-                class="custom-control-input">
-              <label class="custom-control-label" for="paid">Đã thanh toán</label>
-          </div>
-          @error('paid')
-            <div class="invalid-feedback">
-              {{ $message }}
-            </div>
-          @enderror
-        </div>
-        <!-- Nút hành động -->
-        <button type="submit" class="btn btn-primary">Ok</button>
-      </form>
-    </div>
-  </div>
+  @include('orders.form-content', [
+      'mode' => 'update',
+  ])
 
   <div class="card mb-3">
     <div class="card-body">
@@ -132,7 +40,7 @@
           </label>
           <select name="food_item_id" id="food_item_id"
             class="form-control @error('food_item_id') is-invalid @enderror"
-            required>
+            >
             <option value="">Select a food item</option>
             @foreach ($foodItems as $item)
               <option value="{{ $item->id }}"
@@ -195,7 +103,8 @@
                   @csrf
                   @method('PATCH')
                   <select name="status" onchange="this.form.submit()"
-                    class="form-control form-control-sm d-inline @error('status') is-invalid @enderror" style="width: fit-content;">
+                    class="form-control form-control-sm d-inline @error('status') is-invalid @enderror"
+                    style="width: fit-content;">
                     <option value="chuẩn bị"
                       {{ $detail->status == 'chuẩn bị' ? 'selected' : '' }}>Chuẩn
                       bị</option>
@@ -212,15 +121,16 @@
                     </div>
                   @enderror
                 </form>
-                <form action="{{ route('order-details.destroy', $detail) }}" method="POST"
-                  class="d-inline">
+                <form action="{{ route('order-details.destroy', $detail) }}"
+                  method="POST" class="d-inline">
                   @csrf
                   @method('DELETE')
-                  
-                  <button type="submit" class="btn btn-sm btn-danger" {{ $detail->status == 'đã ra' ? 'disabled' : '' }}>
+
+                  <button type="submit" class="btn btn-sm btn-danger"
+                    {{ $detail->status == 'đã ra' ? 'disabled1' : '' }}>
                     Hủy
                   </button>
-              </form>
+                </form>
               </td>
             </tr>
           @endforeach
@@ -241,7 +151,7 @@
     </h5>
     <h5>
       Cần thanh toán
-      {{ number_format($order->total / 100 * (100 - $order->discount), 0, '.', ',') }}₫
+      {{ number_format(($order->total / 100) * (100 - $order->discount), 0, '.', ',') }}₫
     </h5>
   </div>
 
@@ -251,6 +161,16 @@
 @endsection
 
 @section('script')
+  @if (session('success'))
+    <script>
+      Swal.fire({
+        icon: 'success',
+        title: 'Thành công',
+        text: '{{ session('success') }}',
+        confirmButtonColor: '#4e73df',
+      })
+    </script>
+  @endif
   @if (session('error'))
     <script>
       Swal.fire({

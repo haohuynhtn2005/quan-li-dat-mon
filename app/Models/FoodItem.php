@@ -15,4 +15,12 @@ class FoodItem extends Model
     {
         return $this->belongsTo(FoodType::class);
     }
+
+    public function ingredients()
+    {
+        return $this->belongsToMany(Ingredient::class, 'food_ingredients')
+                    ->withPivot('quantity')
+                    ->withTimestamps();
+    }
+
 }

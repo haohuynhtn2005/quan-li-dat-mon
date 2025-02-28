@@ -20,6 +20,17 @@
       </a>
     </div>
   </div>
+
+  <form method="GET" action="{{ route('orders.index') }}">
+    <select name="paid" onchange="this.form.submit()"
+      class="form-control" style="width: fit-content;">
+        <option value="">Tất cả</option>
+        <option value="false" {{ request('paid') == 'false' ? 'selected' : '' }}>
+          Chưa thanh toán
+        </option>
+    </select>
+  </form>
+  
   <div class="table-responsive">
     <table class="table table-bordered" id="dataTable" width="100%"
       cellspacing="0">
@@ -67,28 +78,44 @@
               </form>
             </td>
             <td>
-              <a href="{{ route('orders.edit', $order) }}"
-                class="btn btn-sm btn-warning">Sửa</a>
+              {{-- <a href="{{ route('orders.edit', $order) }}"
+                class="btn btn-sm btn-warning">Sửa</a> --}}
               <a href="{{ route('orders.show', $order) }}"
-                class="btn btn-sm btn-info">Đặt món</a>
-              {{-- <form
+                class="btn btn-sm btn-info">Đặt</a>
+              <form
                 action="{{ route('orders.destroy', $order) }}"
                 method="POST"
                 class="d-inline"
                 >
                 @method('DELETE')
                 @csrf
-                <button class="btn btn-sm btn-danger">Xóa</button>
-              </form> --}}
+                <button class="btn btn-sm btn-danger"
+                  onclick="return confirm(this)">Hủy</button>
+              </form>
             </td>
           </tr>
         @endforeach
       </tbody>
     </table>
+    <!-- Pagination -->
+    <div class="d-flex justify-content-center">
+      {{-- {!! $orders->links() !!} --}}
+      {{ $orders->appends(request()->query())->links() }}
+    </div>
   </div>
 @endsection
 
 @section('script')
+  @if (session('success'))
+    <script>
+      Swal.fire({
+        icon: 'success',
+        title: 'Thành công',
+        text: '{{ session('success') }}',
+        confirmButtonColor: '#4e73df',
+      })
+    </script>
+  @endif
   @if (session('error'))
     <script>
       Swal.fire({
