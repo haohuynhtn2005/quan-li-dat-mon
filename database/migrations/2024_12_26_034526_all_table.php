@@ -8,7 +8,8 @@ return new class extends Migration {
   /**
    * Run the migrations.
    */
-  public function up(): void {
+  public function up(): void
+  {
     Schema::create('departments', function (Blueprint $table) {
       $table->id();
       $table->string('name');
@@ -59,11 +60,25 @@ return new class extends Migration {
     });
     Schema::create('order_details', function (Blueprint $table) {
       $table->id();
-      $table->foreignId('order_id')->constrained('orders');
+      $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
       $table->foreignId('food_item_id')->constrained('food_items');
       $table->integer('quantity');
       $table->bigInteger('price');
       $table->enum('status', ['chuẩn bị', 'đã nấu', 'đã ra'])->default('chuẩn bị');
+      $table->timestamps();
+    });
+    Schema::create('ingredients', function (Blueprint $table) {
+      $table->id();
+      $table->string('name')->unique();
+      $table->decimal('quantity', 10, 2)->default(0);
+      $table->string('unit')->nullable();
+      $table->timestamps();
+    });
+    Schema::create('food_ingredients', function (Blueprint $table) {
+      $table->id();
+      $table->foreignId('food_item_id')->constrained('food_items')->onDelete('cascade');
+      $table->foreignId('ingredient_id')->constrained('ingredients')->onDelete('cascade');
+      $table->decimal('quantity', 10, 2);
       $table->timestamps();
     });
 
@@ -72,7 +87,8 @@ return new class extends Migration {
   /**
    * Reverse the migrations.
    */
-  public function down(): void {
+  public function down(): void
+  {
     //
   }
 };

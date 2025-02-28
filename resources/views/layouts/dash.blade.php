@@ -64,6 +64,8 @@
                         <a class="collapse-item" href="{{ route('tables.index') }}">Table</a>
                         <a class="collapse-item" href="{{ route('food-types.index') }}">Food type</a>
                         <a class="collapse-item" href="{{ route('food-items.index') }}">Food item</a>
+                        <a class="collapse-item" href="{{ route('ingredients.index') }}">Ingredient</a>
+                        <a class="collapse-item" href="{{ route('food_ingredients.index') }}">Food ingredient</a>
                         <a class="collapse-item" href="{{ route('orders.index') }}">Order</a>
                         <a class="collapse-item" href="{{ route('department.index') }}">Department</a>
                         <a class="collapse-item" href="{{ route('employee.index') }}">Employee</a>

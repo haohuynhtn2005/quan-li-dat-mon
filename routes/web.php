@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\FoodIngredientController;
 use App\Http\Controllers\FoodItemController;
 use App\Http\Controllers\FoodTypeController;
+use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DepartmentController;
@@ -30,12 +32,6 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
 Route::middleware(['auth', 'verified', 'role:staff,admin'])->prefix('manage')->group(function () {
     Route::get('/', function () {
         return view('layouts.dash');
@@ -44,16 +40,19 @@ Route::middleware(['auth', 'verified', 'role:staff,admin'])->prefix('manage')->g
     Route::resource('tables', TableController::class);
     Route::resource('food-types', FoodTypeController::class);
     Route::resource('food-items', FoodItemController::class);
+    Route::resource('ingredients', IngredientController::class);
+
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
     Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
     Route::get('/orders/{order}/edit', [OrderController::class, 'edit'])->name('orders.edit');
     Route::put('/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
     Route::patch('/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
+    Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
 
     Route::put('/orders/update-paid/{order}', [OrderController::class, 'updatePaid'])->name('orders.updatePaid');
     Route::patch('/orders/update-paid/{order}', [OrderController::class, 'updatePaid'])->name('orders.updatePaid');
-    
+
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::post('/orders/{order}/details', [OrderController::class, 'addOrderDetail'])->name('orders.addDetail');
     Route::put('/order-details/{orderDetail}/status', [OrderController::class, 'updateOrderDetailStatus'])
@@ -63,7 +62,12 @@ Route::middleware(['auth', 'verified', 'role:staff,admin'])->prefix('manage')->g
     Route::delete('/order-details/{orderDetail}', [OrderController::class, 'removeOrderDetail'])
         ->name('order-details.destroy');
 
-
+    Route::get('/food_ingredients', [FoodIngredientController::class, 'index'])->name('food_ingredients.index');
+    Route::get('/food_ingredients/create', [FoodIngredientController::class, 'create'])->name('food_ingredients.create');
+    Route::post('/food_ingredients/store', [FoodIngredientController::class, 'store'])->name('food_ingredients.store');
+    Route::delete('/food_ingredients/{id}', [FoodIngredientController::class, 'destroy'])->name('food_ingredients.destroy');
+    Route::get('/food_ingredients/{id}/edit', [FoodIngredientController::class, 'edit'])->name('food_ingredients.edit');
+    Route::put('/food_ingredients/{id}', [FoodIngredientController::class, 'update'])->name('food_ingredients.update');
 
     Route::get('/department', [DepartmentController::class, 'index'])->name('department.index');
     Route::get('/department/create', [DepartmentController::class, 'create'])->name('department.create');
@@ -90,8 +94,14 @@ Route::middleware(['auth', 'verified', 'role:staff,admin'])->prefix('manage')->g
 Route::get('/invoice', [InvoiceController::class, 'index'])->name('invoice.index');
 Route::get('/invoice/create', [InvoiceController::class, 'create'])->name('invoice.create');
 Route::post('/invoice/store', [InvoiceController::class, 'store'])->name('invoice.store');
-Route::delete('/invoice/{id}', [InvoiceController::class, 'destroy'])->name('invoice.destroy'); // Xóa đơn hàng
-Route::get('/invoice/{id}/edit', [InvoiceController::class, 'edit'])->name('invoice.edit'); // Hiển thị form sửa đơn hàng
-Route::put('/invoice/{id}', [InvoiceController::class, 'update'])->name('invoice.update'); // Cập nhật thông tin đơn hàng
+Route::delete('/invoice/{id}', [InvoiceController::class, 'destroy'])->name('invoice.destroy');
+Route::get('/invoice/{id}/edit', [InvoiceController::class, 'edit'])->name('invoice.edit');
+Route::put('/invoice/{id}', [InvoiceController::class, 'update'])->name('invoice.update');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
 require __DIR__ . '/auth.php';

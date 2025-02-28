@@ -14,9 +14,15 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $orders = Order::with(['user', 'table'])->latest()->paginate(10);
+        $query = Order::with(['user', 'table'])->latest();
+
+        if ($request->has('paid') && $request->paid === 'false') {
+            $query->where('paid', false);
+        }
+    
+        $orders = $query->paginate(10)->appends($request->query());
         return view('orders.index', compact('orders'));
     }
 
@@ -94,18 +100,21 @@ class OrderController extends Controller
     {
         try {
             $order->delete();
-            return redirect()->route('orders.index')->with('success', 'Order deleted successfully.');
+            return redirect()->route('orders.index')->with('success', 'Đã xóa.');
         } catch (\Exception $e) {
-            return redirect()->route('orders.index')->with('error', 'Error deleting order.');
+            return redirect()->route('orders.index')->with('error', 'Lỗi xóa đơn.');
         }
     }
 
     public function updatePaid(Request $request, Order $order)
     {
+        $allServed = $order->orderDetails()->where('status', '!=', 'đã ra')->doesntExist();
+        if (!$allServed && $request->has('paid')) {
+            return redirect()->route('orders.index')->with('error', 'Không thể thanh toán khi có món chưa được phục vụ.');
+        }
         $order->update(['paid' => $request->has('paid')]);
-        return redirect()->route('orders.index')->with('success', 'Payment status updated successfully.');
+        return redirect()->route('orders.index')->with('success', 'Cập nhật thanh toán thành công.');
     }
-
 
     public function addOrderDetail(Request $request, Order $order)
     {
@@ -114,18 +123,31 @@ class OrderController extends Controller
             'quantity' => 'required|integer|min:1',
         ]);
 
-        $foodItem = FoodItem::findOrFail($request->food_item_id);
+        if ($order->paid) {
+            return redirect()->route('orders.show', $order->id)
+                ->with('error', 'Đã thanh toán, không thể thêm');
+        }
+
+        $foodItem = FoodItem::with('ingredients')->findOrFail($request->food_item_id);
+        foreach ($foodItem->ingredients as $ingredient) {
+            $requiredQuantity = $ingredient->pivot->quantity * $request->quantity; // Adjust for order quantity
+            if ($ingredient->quantity < $requiredQuantity) {
+                return redirect()->route('orders.show', $order->id)
+                    ->with('error', "Không đủ nguyên liệu: {$ingredient->name}");
+            }
+            $ingredient->decrement('quantity', $requiredQuantity);
+        }
 
         OrderDetail::create([
             'order_id' => $order->id,
             'food_item_id' => $request->food_item_id,
             'quantity' => $request->quantity,
             'price' => $foodItem->price,
-            'status' => 'chuẩn bị',
         ]);
 
-        return redirect()->route('orders.show', $order->id)->with('success', 'Order detail added successfully.');
+        return redirect()->route('orders.show', $order->id)->with('success', 'Món ăn đã được thêm.');
     }
+
 
     public function updateOrderDetailStatus(Request $request, OrderDetail $orderDetail)
     {
@@ -137,16 +159,21 @@ class OrderController extends Controller
             'status' => $request->status,
         ]);
 
-        return redirect()->back()->with('success', 'Order detail status updated successfully.');
+        return redirect()->back()->with('success', 'Cập nhật thành công');
     }
 
     public function removeOrderDetail(OrderDetail $orderDetail)
     {
-        if ($orderDetail->status === 'đã ra') {
-            return redirect()->back()->with('error', 'Không thể xóa vì món đã được phục vụ.');
+        if ($orderDetail->status != 'chuẩn bị') {
+            return redirect()->back()->with('error', 'Không thể xóa vì món ' . $orderDetail->status);
+        }
+        $foodItem = $orderDetail->foodItem;
+        foreach ($foodItem->ingredients as $ingredient) {
+            $usedQuantity = $ingredient->pivot->quantity;
+            $ingredient->increment('quantity', $usedQuantity * $orderDetail->quantity);
         }
         $orderDetail->delete();
 
-        return redirect()->back()->with('success', 'Chi tiết đơn hàng đã được xóa.');
+        return redirect()->back()->with('success', 'Món đã được xóa.');
     }
 }
