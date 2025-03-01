@@ -26,7 +26,8 @@ class OrderSeeder extends Seeder
                     : User::where('role', '=', 'user')
                         ->inRandomOrder()->first()?->id,
                 'created_at' => $date->addDays($day),
-                'paid' => true,
+                // 'paid' => true,
+                'status' => 'đã thanh toán',
             ])
                 ->has(
                     OrderDetail::factory()
@@ -39,14 +40,17 @@ class OrderSeeder extends Seeder
         $tableIds = Table::pluck('id')->shuffle();
         foreach ($tableIds as $idx => $tableId) {
             $isUnregisteredGuest = rand(1, 100) <= 20;
-            $paid = rand(1, 100) <= 30;
-            $orderDetailState = $paid ? ['status' => 'đã ra'] : [];
+            $statuses = ['đang ăn', 'đã ăn', 'đã thanh toán'];
+            $status = $statuses[random_int(0, count($statuses) - 1)];
+            // $paid = rand(1, 100) <= 30;
+            $orderDetailState = $status != 'đang ăn' ? ['status' => 'đã ra'] : [];
             Order::factory()->state([
                 'user_id' => $isUnregisteredGuest ? null
                     : User::where('role', '=', 'user')
                         ->inRandomOrder()->first()?->id ?? User::factory(),
                 'created_at' => $date->addDays($idx),
-                'paid' => $paid,
+                // 'paid' => $paid,
+                'status' => $status,
             ])
                 ->has(
                     OrderDetail::factory()

@@ -14,16 +14,16 @@ class FoodTypeSeeder extends Seeder
     public function run(): void
     {
         $foodTypes = [
-            'Món nước',    // Noodle soups (e.g., Phở, Bún Bò Huế)
-            'Món cơm',     // Rice dishes (e.g., Cơm Tấm, Cơm Gà)
-            'Món chay',    // Vegetarian dishes
-            'Hải sản',     // Seafood
-            'Món nướng',   // Grilled dishes (e.g., Bún Chả, Thịt Nướng)
-            'Món hấp',     // Steamed dishes
-            'Món xào',     // Stir-fried dishes
-            'Món gỏi',     // Salads (e.g., Gỏi Gà, Gỏi Ngó Sen)
-            'Bánh & ăn vặt', // Snacks & cakes (e.g., Bánh Mì, Bánh Xèo)
-            'Đồ uống'       // Drinks (e.g., Trà Sữa, Nước Mía)
+            'Món nước',
+            'Món cơm',
+            'Món chay',
+            'Hải sản',
+            'Món nướng',
+            'Món hấp',
+            'Món xào',
+            'Món gỏi',
+            'Bánh & ăn vặt',
+            'Đồ uống',
         ];
         foreach ($foodTypes as $idx => $item) {
             FoodType::factory()->create([

@@ -26,11 +26,9 @@
         <label for="table_id" class="form-label">
           Bàn
         </label>
-        <select 
-          name="table_id" 
-          id="table_id"
+        <select name="table_id" id="table_id"
           class="form-control @error('table_id') is-invalid @enderror"
-          required>
+          >
           @foreach($tables as $table)
               <option value="{{ $table->id }}"
                 @if (isset($order) && old('table_id', $order->table_id) == $table->id)
@@ -51,9 +49,7 @@
         <label for="user_id" class="form-label">
           Khách
         </label>
-        <select 
-          name="user_id" 
-          id="user_id"
+        <select name="user_id" id="user_id"
           class="form-control @error('user_id') is-invalid @enderror"
           >
           <option value="">Khách vãng lai</option>
@@ -91,21 +87,32 @@
       </div>
 
       @if ($mode == 'update')
-      <div class="form-group">
-        <div class="custom-control custom-checkbox">
-            <input type="checkbox" name="paid" id="paid" value="1"
-              @if ($order->paid)
-                checked
-              @endif
-              class="custom-control-input">
-            <label class="custom-control-label" for="paid">Đã thanh toán</label>
+        <div class="mb-3">
+          <label for="status" class="form-label">
+            Trạng thái
+          </label>
+          <select name="status" id="status"
+            class="form-control @error('status') is-invalid @enderror"
+            >
+            @php
+              $statuses = ['đang ăn', 'đã ăn', 'đã thanh toán'];
+            @endphp
+            @foreach($statuses as $status)
+                <option value="{{ $status }}"
+                  @if (isset($order) && old('status', $order->status) == $status)
+                    selected
+                  @endif
+                  >
+                    {{ ucfirst($status) }}
+                </option>
+            @endforeach
+          </select>
+          @error('status')
+            <div class="invalid-feedback">
+              {{ $message }}
+            </div>
+          @enderror
         </div>
-        @error('paid')
-          <div class="invalid-feedback">
-            {{ $message }}
-          </div>
-        @enderror
-      </div>
       @endif
 
       <!-- Nút hành động -->
