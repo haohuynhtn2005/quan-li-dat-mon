@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\FoodItem;
 use App\Models\FoodType;
+use App\Models\Ingredient;
 use Illuminate\Http\Request;
 use Storage;
 
@@ -60,9 +61,11 @@ class FoodItemController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(FoodItem $foodItem)
     {
-        //
+        $foodTypes = FoodType::get();
+        $ingredients = Ingredient::all();
+        return view('food_items.show', compact('foodItem', 'foodTypes', 'ingredients'));
     }
 
     /**
