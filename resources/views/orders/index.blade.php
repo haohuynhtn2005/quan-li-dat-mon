@@ -92,9 +92,6 @@
                 <input type="hidden" name="table_id" value="{{ $order->table_id }}">
                 <input type="hidden" name="discount_id" value="{{ $order->discount }}">
                 <div class="mb-3">
-                  <label for="status" class="form-label">
-                    Trạng thái
-                  </label>
                   <select name="status" id="status"
                     old="{{ $order->status }}"
                     {{-- value="{{ $order->status }}" --}}

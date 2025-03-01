@@ -68,6 +68,7 @@ Route::middleware(['auth', 'verified', 'role:staff,admin'])->prefix('manage')->g
     Route::delete('/food_ingredients/{id}', [FoodIngredientController::class, 'destroy'])->name('food_ingredients.destroy');
     Route::get('/food_ingredients/{id}/edit', [FoodIngredientController::class, 'edit'])->name('food_ingredients.edit');
     Route::put('/food_ingredients/{id}', [FoodIngredientController::class, 'update'])->name('food_ingredients.update');
+    Route::patch('/food_ingredients/{id}', [FoodIngredientController::class, 'update'])->name('food_ingredients.update');
 
     Route::get('/department', [DepartmentController::class, 'index'])->name('department.index');
     Route::get('/department/create', [DepartmentController::class, 'create'])->name('department.create');

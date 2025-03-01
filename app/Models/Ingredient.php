@@ -18,7 +18,7 @@ class Ingredient extends Model
     public function foodItems()
     {
         return $this->belongsToMany(FoodItem::class, 'food_ingredients')
-                    ->withPivot('quantity')
+                    ->withPivot(['id', 'quantity'])
                     ->withTimestamps();
     }
 }

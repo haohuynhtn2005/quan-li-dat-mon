@@ -65,6 +65,7 @@
           <input
             type="number" name="quantity" id="quantity"
             value="{{ old('quantity', isset($ingredient) ? $ingredient->quantity : '') }}"
+            step="0.001"
             placeholder="Nhập tên"
             class="form-control @error('quantity') is-invalid @enderror"
           >

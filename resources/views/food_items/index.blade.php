@@ -49,7 +49,7 @@
             <td>{{ number_format($foodItem->price, 0, '', ' ') }}</td>
             <td>{{ $foodItem->foodType->name }}</td>
             <td>
-              <a href="{{ route('food-items.edit', $foodItem) }}"
+              <a href="{{ route('food-items.show', $foodItem) }}"
                 class="btn btn-sm btn-warning">Sửa</a>
               <form
                 action="{{ route('food-items.destroy', $foodItem) }}"
