@@ -54,7 +54,8 @@ return new class extends Migration {
       $table->id();
       $table->foreignId('user_id')->nullable()->constrained('users');
       $table->foreignId('table_id')->constrained('tables');
-      $table->boolean('paid')->default(false);
+      // $table->boolean('paid')->default(false);
+      $table->enum('status', ['đang ăn', 'đã ăn', 'đã thanh toán'])->default('đang ăn');
       $table->decimal('discount')->default(0);
       $table->timestamps();
     });

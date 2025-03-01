@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\FoodIngredient;
 use App\Models\FoodItem;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -64,10 +65,13 @@ class FoodItemSeeder extends Seeder
         ];
         foreach ($foodTypes as $idx => $foodItems) {
             foreach ($foodItems as $item) {
-                FoodItem::factory()->create([
+                $foodItem = FoodItem::factory()->create([
                     'name' => $item['name'],
                     'image' => $item['image'],
                     'food_type_id' => $idx,
+                ]);
+                FoodIngredient::factory(2)->create([
+                    'food_item_id' => $foodItem->id,
                 ]);
             }
         }

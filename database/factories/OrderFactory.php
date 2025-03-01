@@ -21,8 +21,9 @@ class OrderFactory extends Factory
         return [
             'user_id' => User::inRandomOrder()->first()?->id ?? User::factory(),
             'table_id' => Table::inRandomOrder()->first()?->id ?? Table::factory(),
-            'paid' => fake()->boolean(30), // 30% chance of being paid
-            'discount' => fake()->randomFloat(0, 0, 50), // Discount between 0 - 50
+            // 'paid' => fake()->boolean(30),
+            'status' => fake()->randomElement(['đang ăn', 'đã ăn', 'đã thanh toán']),
+            'discount' => fake()->randomFloat(0, 0, 50),
         ];
     }
 }

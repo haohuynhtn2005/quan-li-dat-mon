@@ -21,13 +21,22 @@
     </div>
   </div>
 
+  @php
+    $statuses = ['đang ăn', 'đã ăn', 'đã thanh toán'];
+  @endphp
   <form method="GET" action="{{ route('orders.index') }}">
-    <select name="paid" onchange="this.form.submit()"
-      class="form-control" style="width: fit-content;">
+    <select name="status" onchange="this.form.submit()"
+      class="form-control form-control-sm mb-1" style="width: fit-content;">
         <option value="">Tất cả</option>
-        <option value="false" {{ request('paid') == 'false' ? 'selected' : '' }}>
-          Chưa thanh toán
-        </option>
+        @foreach($statuses as $status)
+            <option value="{{ rawurlencode($status) }}"
+              @if (urldecode(request('status')) == $status)
+                selected
+              @endif
+              >
+                {{ Str::ucfirst($status) }}
+            </option>
+        @endforeach
     </select>
   </form>
   
@@ -56,7 +65,7 @@
             <td>{{ number_format($order->total, 0, '.', ',') }}₫</td>
             <td>{{ number_format($order->total / 100 * (100 - $order->discount), 0, '.', ',') }}₫</td>
             <td>
-              <form action="{{ route('orders.updatePaid', $order) }}" method="POST" class="d-inline">
+              {{-- <form action="{{ route('orders.updatePaid', $order) }}" method="POST" class="d-inline">
                 @method('PATCH')
                 @csrf
                   <div class="form-group">
@@ -75,6 +84,39 @@
                       </div>
                     @enderror
                   </div>
+              </form> --}}
+              <form action="{{ route('orders.update', $order) }}" method="POST">
+                @method('PATCH')
+                @csrf
+                <input type="hidden" name="user_id" value="{{ $order->user_id }}">
+                <input type="hidden" name="table_id" value="{{ $order->table_id }}">
+                <input type="hidden" name="discount_id" value="{{ $order->discount }}">
+                <div class="mb-3">
+                  <label for="status" class="form-label">
+                    Trạng thái
+                  </label>
+                  <select name="status" id="status"
+                    old="{{ $order->status }}"
+                    {{-- value="{{ $order->status }}" --}}
+                    onchange="return confirmSweet(this)"
+                    class="form-control form-control-sm @error('status') is-invalid @enderror"
+                    style="width: fit-content"
+                    >
+                    @foreach($statuses as $status)
+                        <option value="{{ $status }}"
+                          @if (isset($order) && old('status', $order->status) == $status)
+                            selected
+                          @endif
+                          >
+                            {{ Str::ucfirst($status) }}
+                        </option>
+                    @endforeach
+                  </select>
+                  @error('status')
+                    <div class="invalid-feedback">
+                      {{ $message }}
+                    </div>
+                  @enderror
               </form>
             </td>
             <td>
@@ -90,7 +132,7 @@
                 @method('DELETE')
                 @csrf
                 <button class="btn btn-sm btn-danger"
-                  onclick="return confirm(this)">Hủy</button>
+                  onclick="return confirmSweet(this)">Hủy</button>
               </form>
             </td>
           </tr>
@@ -127,7 +169,9 @@
     </script>
   @endif
   <script>
-     function confirm(elem) {
+     function confirmSweet(elem) {
+      elem.setAttribute('new', elem.value)
+      elem.value = elem.getAttribute('old')
       Swal.fire({
         title: "Xác nhận?",
         text: "Thực hiện hành động này",
@@ -140,7 +184,7 @@
         confirmButtonText: "Ok",
       }).then((result) => {
         if (result.isConfirmed) {
-          elem.checked = !elem.checked;
+          elem.value = elem.getAttribute('new');
           elem.form.submit();
         }
       });
