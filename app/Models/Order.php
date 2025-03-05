@@ -15,6 +15,7 @@ class Order extends Model
         'discount',
         // 'paid',
         'status',
+        'created_at',
     ];
 
     public function user()

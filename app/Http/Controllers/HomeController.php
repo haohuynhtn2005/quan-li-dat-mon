@@ -22,7 +22,7 @@ class HomeController extends Controller
         $drinkType = FoodType::where('name', 'Đồ uống')->first();
 
         $topSellersQuery = OrderDetail::select('food_item_id', DB::raw('SUM(quantity) as total_sold'))
-            // ->whereBetween('created_at', [$startDate, $endDate]) // Filter for last month
+            ->whereBetween('created_at', [$startDate, $endDate]) // Filter for last month
             ->whereHas('foodItem', function ($query) use ($drinkType) {
                 if ($drinkType) {
                     $query->where('food_type_id', '!=', $drinkType->id);

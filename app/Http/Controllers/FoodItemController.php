@@ -58,7 +58,7 @@ class FoodItemController extends Controller
 
         $imagePath = '';
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('food_images', 'public');
+            $imagePath = $request->file('image')->store('food_items', 'public');
         }
 
         FoodItem::create([
@@ -107,7 +107,7 @@ class FoodItemController extends Controller
 
         if ($request->hasFile('image')) {
             Storage::disk('public')->delete($foodItem->image);
-            $imagePath = $request->file('image')->store('food_images', 'public');
+            $imagePath = $request->file('image')->store('food_items', 'public');
         } else {
             $imagePath = $foodItem->image;
         }
