@@ -12,7 +12,7 @@ class FoodTypeController extends Controller
      */
     public function index()
     {
-        $foodTypes = FoodType::all();
+        $foodTypes = FoodType::paginate(10);
         return view('food_types.index', compact('foodTypes'));
     }
 

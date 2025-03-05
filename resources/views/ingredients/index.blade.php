@@ -20,7 +20,31 @@
       </a>
     </div>
   </div>
+  <form method="GET" action="" class="mb-1">
+    <input type="hidden" name="search" value="{{ request('search') }}" placeholder="Tìm kiếm món ăn">
 
+    <select name="sort_by" onchange="this.form.submit()" 
+      class="form-control form-control-sm d-inline" style="width: fit-content;">
+        <option value="updated_at" {{ request('sort_by', 'updated_at') == 'updated_at' ? 'selected' : '' }}>
+          Ngày nhập
+        </option>
+        <option value="quantity" {{ request('sort_by') == 'quantity' ? 'selected' : '' }}>
+          Số lượng
+        </option>
+    </select>
+
+    <select name="sort_order" onchange="this.form.submit()" 
+      class="form-control form-control-sm d-inline" style="width: fit-content;">
+        <option value="desc" {{ request('sort_order', 'desc') == 'desc' ? 'selected' : '' }}>
+          Giảm dần
+        </option>
+        <option value="asc" {{ request('sort_order') == 'asc' ? 'selected' : '' }}>
+          Tăng dần
+        </option>
+    </select>
+
+    <button type="submit" class="btn btn-primary btn-sm">Lọc</button>
+  </form>
   <div class="card shadow mb-3">
     <div class="card-body">
       <div class="table-responsive">
@@ -32,7 +56,7 @@
               <th>Tên Nguyên Liệu</th>
               <th>Số Lượng</th>
               <th>Đơn Vị</th>
-              <th>Ngày Tạo</th>
+              <th>Ngày Nhập</th>
               <th>Thao Tác</th>
             </tr>
           </thead>
@@ -42,7 +66,7 @@
               <th>Tên Nguyên Liệu</th>
               <th>Số Lượng</th>
               <th>Đơn Vị</th>
-              <th>Ngày Tạo</th>
+              <th>Ngày Nhập</th>
               <th>Thao Tác</th>
             </tr>
           </tfoot>
@@ -53,7 +77,7 @@
                 <td>{{ $ingredient->name }}</td>
                 <td>{{ $ingredient->quantity }}</td>
                 <td>{{ $ingredient->unit }}</td>
-                <td>{{ $ingredient->created_at }}</td>
+                <td>{{ $ingredient->updated_at }}</td>
                 <td>
                   <a href="{{ route('ingredients.edit', $ingredient->id) }}"
                     class="btn btn-sm btn-warning">Sửa</a>
@@ -72,6 +96,10 @@
             @endforeach
           </tbody>
         </table>
+        <!-- Pagination -->
+        <div class="d-flex justify-content-center">
+          {{ $ingredients->appends(request()->query())->links() }}
+        </div>
       </div>
     </div>
 

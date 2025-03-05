@@ -29,7 +29,7 @@
       class="form-control form-control-sm mb-1" style="width: fit-content;">
         <option value="">Tất cả</option>
         @foreach($statuses as $status)
-            <option value="{{ rawurlencode($status) }}"
+            <option value="{{ urlencode($status) }}"
               @if (urldecode(request('status')) == $status)
                 selected
               @endif

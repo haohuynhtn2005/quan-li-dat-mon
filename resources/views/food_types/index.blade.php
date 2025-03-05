@@ -56,6 +56,10 @@
                 @endforeach
               </tbody>
             </table>
+          <!-- Pagination -->
+          <div class="d-flex justify-content-center">
+            {{ $foodTypes->appends(request()->query())->links() }}
+          </div>
           </div>
         </div>
       </div>

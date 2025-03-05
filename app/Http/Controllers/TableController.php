@@ -8,7 +8,7 @@ use Illuminate\Validation\ValidationException;
 
 class TableController extends Controller {
   public function index() {
-    $tables = Table::get();
+    $tables = Table::paginate(10);
     return view('tables.index')->with('tables', $tables);
   }
 

@@ -8,9 +8,21 @@ use Illuminate\Http\Request;
 class IngredientController extends Controller
 {
     // Hiển thị danh sách nguyên liệu
-    public function index()
+    public function index(Request $request)
     {
-        $ingredients = Ingredient::all();
+        $query = Ingredient::query();
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where('name', 'like', "%$search%");
+        }
+
+        $sortBy = $request->input('sort_by', 'updated_at');
+        $sortOrder = $request->input('sort_order', 'desc');
+
+        if (in_array($sortBy, ['updated_at', 'quantity'])) {
+            $query->orderBy($sortBy, $sortOrder);
+        }
+        $ingredients = $query->paginate(10)->withQueryString();
         return view('ingredients.index', compact('ingredients'));
     }
 

@@ -13,9 +13,23 @@ class FoodItemController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $foodItems = FoodItem::with('foodType')->get();
+        $query = FoodItem::with('foodType');
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where('name', 'like', "%$search%");
+        }
+
+        $sortBy = $request->input('sort_by', 'created_at');
+        $sortOrder = $request->input('sort_order', 'desc');
+        
+        if (in_array($sortBy, ['created_at', 'price'])) {
+            $query->orderBy($sortBy, $sortOrder);
+        }
+    
+        $foodItems = $query->paginate(10)->withQueryString();
+
         return view('food_items.index', compact('foodItems'));
     }
 
