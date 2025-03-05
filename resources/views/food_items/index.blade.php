@@ -20,6 +20,31 @@
       </a>
     </div>
   </div>
+  <form method="GET" action="{{ route('food-items.index') }}" class="mb-1">
+    <input type="hidden" name="search" value="{{ request('search') }}" placeholder="Tìm kiếm món ăn">
+
+    <select name="sort_by" onchange="this.form.submit()" 
+      class="form-control form-control-sm d-inline" style="width: fit-content;">
+        <option value="created_at" {{ request('sort_by', 'created_at') == 'created_at' ? 'selected' : '' }}>
+          Ngày tạo
+        </option>
+        <option value="price" {{ request('sort_by') == 'price' ? 'selected' : '' }}>
+          Giá
+        </option>
+    </select>
+
+    <select name="sort_order" onchange="this.form.submit()" 
+      class="form-control form-control-sm d-inline" style="width: fit-content;">
+        <option value="desc" {{ request('sort_order', 'desc') == 'desc' ? 'selected' : '' }}>
+          Giảm dần
+        </option>
+        <option value="asc" {{ request('sort_order') == 'asc' ? 'selected' : '' }}>
+          Tăng dần
+        </option>
+    </select>
+
+    <button type="submit" class="btn btn-primary btn-sm">Lọc</button>
+</form>
   <div class="table-responsive">
     <table class="table table-bordered" id="dataTable" width="100%"
       cellspacing="0">
@@ -65,6 +90,10 @@
         @endforeach
       </tbody>
     </table>
+    <!-- Pagination -->
+    <div class="d-flex justify-content-center">
+      {{ $foodItems->appends(request()->query())->links() }}
+    </div>
   </div>
 @endsection
 

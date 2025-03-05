@@ -64,6 +64,10 @@
                 @endforeach
               </tbody>
             </table>
+          <!-- Pagination -->
+          <div class="d-flex justify-content-center">
+            {{ $tables->appends(request()->query())->links() }}
+          </div>
           </div>
         </div>
       </div>

@@ -14,6 +14,7 @@ class Ingredient extends Model
         'quantity',
         'unit',
     ];
+    public $timestamps = true;
     
     public function foodItems()
     {
