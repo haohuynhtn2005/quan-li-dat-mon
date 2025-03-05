@@ -156,8 +156,9 @@
   </div>
 
   <!-- Back Button -->
-  <a href="{{ route('orders.index') }}" class="btn btn-secondary mt-3">Back to
-    Orders</a>
+  <a href="{{ route('orders.index', request()->query()) }}" class="btn btn-secondary mt-3">
+    Quay lại
+  </a>
 @endsection
 
 @section('script')

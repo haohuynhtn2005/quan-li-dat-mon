@@ -117,9 +117,7 @@
               </form>
             </td>
             <td>
-              {{-- <a href="{{ route('orders.edit', $order) }}"
-                class="btn btn-sm btn-warning">Sửa</a> --}}
-              <a href="{{ route('orders.show', $order) }}"
+              <a href="{{ route('orders.show', [$order, ...request()->query()]) }}"
                 class="btn btn-sm btn-info">Đặt</a>
               <form
                 action="{{ route('orders.destroy', $order) }}"
