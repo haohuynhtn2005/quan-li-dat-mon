@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\FoodIngredient;
 use App\Models\FoodItem;
+use App\Models\FoodType;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -16,7 +17,7 @@ class FoodItemSeeder extends Seeder
     {
         $foodTypes = [
             // Món nước (Noodle soups)
-            1 => [
+            'Món nước' => [
                 [
                     'name' => 'Lẩu thái',
                     'image' => 'lau-thai.jpg',
@@ -28,7 +29,7 @@ class FoodItemSeeder extends Seeder
             ],
 
             // Món cơm (Rice dishes)
-            2 => [
+            'Món cơm' => [
                 [
                     'name' => 'Cơm chiên nước mắm',
                     'image' => 'com-chien-nuoc-mam.jpg',
@@ -40,7 +41,7 @@ class FoodItemSeeder extends Seeder
             ],
 
             // Món xào (Stir-fried dishes)
-            3 => [
+            'Món chay' => [
                 [
                     'name' => 'Mì xào hải sản',
                     'image' => 'mi-xao-hai-san.jpg',
@@ -52,7 +53,7 @@ class FoodItemSeeder extends Seeder
             ],
 
             // Hải sản (Seafood)
-            4 => [
+            'Hải sản' => [
                 [
                     'name' => 'Ghẹ hấp bia',
                     'image' => 'ghe-hap-bia.jpg',
@@ -62,13 +63,22 @@ class FoodItemSeeder extends Seeder
                     'image' => 'muc-nuong-muoi-ot.jpg',
                 ],
             ],
+            'Món nướng' => [],
+            'Món hấp' => [],
+            'Món xào' => [],
+            'Món gỏi' => [],
+            'Bánh & ăn vặt' => [],
+            'Đồ uống' => [],
         ];
-        foreach ($foodTypes as $idx => $foodItems) {
+        foreach ($foodTypes as $key => $foodItems) {
+            $foodType = FoodType::factory()->create([
+                'name' => $key,
+            ]);
             foreach ($foodItems as $item) {
                 $foodItem = FoodItem::factory()->create([
                     'name' => $item['name'],
                     'image' => $item['image'],
-                    'food_type_id' => $idx,
+                    'food_type_id' => $foodType->id,
                 ]);
                 FoodIngredient::factory(2)->create([
                     'food_item_id' => $foodItem->id,
