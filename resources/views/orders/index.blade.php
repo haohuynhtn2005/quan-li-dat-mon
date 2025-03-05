@@ -90,10 +90,11 @@
                     @endforeach
                   </select>
                   @error('status')
-                    <div class="invalid-feedback">
-                      {{ $message }}
-                    </div>
-                  @enderror
+                      <div class="invalid-feedback">
+                        {{ $message }}
+                      </div>
+                    @enderror
+                  </div>
               </form>
             </td>
             <td>
