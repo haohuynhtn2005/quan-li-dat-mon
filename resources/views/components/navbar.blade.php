@@ -1,9 +1,10 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
     <a class="navbar-brand" href="/">
-      <img src="{{ asset('/img/logo.png') }}" alt="" srcset="">
+      <img src="{{ asset('/assets/logo.png') }}" alt="" srcset="" width="50px">
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -12,18 +13,15 @@
           <a class="nav-link active" aria-current="page" href="/">Trang chủ</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/">Đặt món</a>
+          <a class="nav-link" href="{{ route('menu') }}">Món ăn</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="">Giỏ hàng</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/">Đơn mua</a>
         </li>
         @guest
-          <li class="nav-item">
-            <a class="nav-link" href="{{ route('login') }}">Đăng nhập</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ route('register') }}">Đăng ký</a>
-          </li>
         @endguest
         @auth
           <li class="nav-item dropdown">
@@ -46,10 +44,12 @@
           @endif
         @endauth
       </ul>
-      <form class="d-flex" role="search">
-        <input class="form-control me-2" type="search" name="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
+      <a href="{{ route('login') }}" class="me-3">
+        <div class="rounded-circle bg-body-secondary d-flex justify-content-center align-items-center"
+          style="width: 50px;height:50px;">
+          <i class="fas fa-user fa-2xl"></i>
+        </div>
+      </a>
     </div>
   </div>
 </nav>
