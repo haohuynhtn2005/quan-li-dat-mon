@@ -65,26 +65,6 @@
             <td>{{ number_format($order->total, 0, '.', ',') }}₫</td>
             <td>{{ number_format($order->total / 100 * (100 - $order->discount), 0, '.', ',') }}₫</td>
             <td>
-              {{-- <form action="{{ route('orders.updatePaid', $order) }}" method="POST" class="d-inline">
-                @method('PATCH')
-                @csrf
-                  <div class="form-group">
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" name="paid" id="paid{{$order->id}}" value="1"
-                          @if ($order->paid)
-                            checked
-                          @endif
-                          onclick="return confirm(this)"
-                          class="custom-control-input">
-                        <label class="custom-control-label" for="paid{{$order->id}}">Thanh toán</label>
-                    </div>
-                    @error('paid')
-                      <div class="invalid-feedback">
-                        {{ $message }}
-                      </div>
-                    @enderror
-                  </div>
-              </form> --}}
               <form action="{{ route('orders.update', $order) }}" method="POST">
                 @method('PATCH')
                 @csrf
@@ -119,6 +99,9 @@
             <td>
               <a href="{{ route('orders.show', [$order, ...request()->query()]) }}"
                 class="btn btn-sm btn-info">Đặt</a>
+              @if ($order->status == 'đang ăn' || $order->status == 'đã ăn')
+                <button class="btn btn-sm btn-success" onclick="showPaymentModal({{ $order->id }},{{ $order->total / 100 * (100 - $order->discount) }})">Thanh toán</button>
+              @endif
               <form
                 action="{{ route('orders.destroy', $order) }}"
                 method="POST"
@@ -136,8 +119,28 @@
     </table>
     <!-- Pagination -->
     <div class="d-flex justify-content-center">
-      {{-- {!! $orders->links() !!} --}}
       {{ $orders->appends(request()->query())->links() }}
+    </div>
+  </div>
+
+  <!-- Payment Modal -->
+  <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="paymentModalLabel">Thanh toán</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body text-center">
+          <p>Quét mã QR để thanh toán:</p>
+          <img id="qrCode" src="" alt="QR Code" class="img-fluid">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+        </div>
+      </div>
     </div>
   </div>
 @endsection
@@ -164,7 +167,7 @@
     </script>
   @endif
   <script>
-     function confirmSweet(elem) {
+    function confirmSweet(elem) {
       elem.setAttribute('new', elem.value)
       elem.value = elem.getAttribute('old')
       Swal.fire({
@@ -188,5 +191,19 @@
     @foreach ($errors->all() as $error)
     console.warn(`{{ $error }}`)
     @endforeach
+
+    function showPaymentModal(orderId, price) {
+      const bankInfo = {
+            bankId: "970416",         // Mã ngân hàng ACB
+            accountNo: "38752307",   // Số tài khoản của bạn
+            accountName: "TRAN MINH QUOC THAI", // Tên tài khoản của bạn
+            amount: price,
+            content: `Thanh toan don hang ${orderId}` // Nội dung chuyển khoản
+        };
+        // Tạo chuỗi dữ liệu theo định dạng QR Pay VietQR
+        const qrData = `https://api.vietqr.io/image/${bankInfo.bankId}-${bankInfo.accountNo}-compact.jpg?amount=${bankInfo.amount}&addInfo=${bankInfo.content}&accountName=${bankInfo.accountName}`;
+      document.getElementById('qrCode').src = qrData;
+      $('#paymentModal').modal('show');
+    }
   </script>
 @endsection
