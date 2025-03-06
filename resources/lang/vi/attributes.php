@@ -9,4 +9,5 @@ return [
     'unit' => 'Đơn vị',
     'food_item_id' => 'Món',
     'ingredient_id' => 'Nguyên liệu',
+    'address' => 'Địa chỉ',
 ];

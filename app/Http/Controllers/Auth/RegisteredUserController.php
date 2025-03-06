@@ -36,6 +36,7 @@ class RegisteredUserController extends Controller
                 'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
                 'phone' => ['required', 'regex:/^0\d{9,10}$/'],
                 'password' => ['required', 'confirmed', Rules\Password::defaults()],
+                'address' => 'nullable|string|max:65535',
             ],
             [
                 'name.required' => 'Tên không được để trống.',

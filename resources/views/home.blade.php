@@ -10,11 +10,6 @@
     <link href="{{asset('vendor/fontawesome-free/css/all.min.css')}}" rel="stylesheet" type="text/css">
 </head>
 <style>
-    a {
-        text-decoration: none;
-        margin: 0 5px;
-    }
-
     button:hover {
         background: pink;
         color: black;
