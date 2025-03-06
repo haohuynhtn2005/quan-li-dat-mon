@@ -13,10 +13,10 @@
       </a>
     </h1>
     <div>
-      <a href="" class="btn btn-sm btn-primary shadow-sm">
+      {{-- <a href="" class="btn btn-sm btn-primary shadow-sm">
         <i class="fas fa-upload fa-sm text-white-50"></i>
         Tạo
-      </a>
+      </a> --}}
     </div>
   </div>
 
