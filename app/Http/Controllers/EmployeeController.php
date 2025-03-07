@@ -4,29 +4,39 @@ namespace App\Http\Controllers;
 
 use App\Models\Department;
 use App\Models\Employee;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules;
 use Illuminate\Http\Request;
 
-class EmployeeController extends Controller {
-  public function index() {
-    $employees = Employee::get();
-    return view('employee.index')->with('employees', $employees);
+class EmployeeController extends Controller
+{
+  public function index()
+  {
+    $employees = User::whereNotIn('role', ['admin', 'user'])->paginate(10);
+    return view('employees.index')->with('employees', $employees);
   }
 
-  public function create() {
+  public function create()
+  {
     $departments = Department::get();
-    return view('employee.form')->with([
+    return view('employees.form')->with([
       'mode' => 'create',
       'departments' => $departments,
     ]);
   }
 
-  public function store(Request $request) {
-    // Validation
-    $validatedData = $request->validate([
-      'name' => 'required|string|max:255',
-      'email' => 'required|email|unique:employees',
-      'phone' => 'required|string|max:20',
-      'department_id' => 'required|exists:departments,id',
+  public function store(Request $request)
+  {
+    $request->validate([
+      'name' => ['required', 'string', 'max:255'],
+      'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+      'phone' => ['required', 'regex:/^0\d{9,10}$/'],
+      'password' => ['required', Rules\Password::defaults(), 'confirmed', ],
+      'address' => 'nullable|string|max:65535',
+      'role' => ['required', Rule::in(['user', 'staff', 'admin'])],
+      // 'department_id' => 'required|exists:departments,id',
     ], [
       'name.required' => 'Tên nhân viên là bắt buộc.',
       'email.required' => 'Email là bắt buộc.',
@@ -37,22 +47,17 @@ class EmployeeController extends Controller {
       'department_id.exists' => 'Phòng ban không tồn tại.',
     ]);
 
-    // Create new employee
-    Employee::create([
-      'name' => $validatedData['name'],
-      'email' => $validatedData['email'],
-      'phone' => $validatedData['phone'],
-      'department_id' => $validatedData['department_id'],
-    ]);
+    User::create($request->all());
 
-    return redirect()->route('employee.index')->with('success', 'Nhân viên đã được thêm thành công.');
+    return redirect()->route('employees.index')->with('success', 'Nhân viên đã được thêm thành công.');
   }
 
-  public function edit($id) {
+  public function edit($id)
+  {
     $departments = Department::get();
 
-    $employee = Employee::findOrFail($id); // Lấy dữ liệu nhân viên theo ID
-    return view('employee.form', [
+    $employee = User::whereNotIn('role', ['admin', 'user'])->findOrFail($id); // Lấy dữ liệu nhân viên theo ID
+    return view('employees.form', [
       'mode' => 'update',
       'employee' => $employee,
       'departments' => $departments,
@@ -60,21 +65,31 @@ class EmployeeController extends Controller {
   }
 
   // Xử lý cập nhật dữ liệu
-  public function update(Request $request, $id) {
+  public function update(Request $request, $id)
+  {
     $request->validate([
       'name' => 'required|string|max:255',
       'email' => 'required|email|max:255|unique:employees,email,' . $id,
       'phone' => 'required|string|max:15',
-      'department_id' => 'required|integer',
+      'password' => ['nullable', Rules\Password::defaults(), 'confirmed', ],
+      // 'department_id' => 'required|integer',
     ]);
 
-    $employee = Employee::findOrFail($id);
-    $employee->update($request->all());
+    $employee = User::findOrFail($id);
+    $employee->update($request->except(['password']));
 
-    return redirect()->route('employee.index')->with('success', 'Cập nhật nhân viên thành công.');
+    // Update password only if provided
+    if ($request->filled('password')) {
+        $employee->update([
+            'password' => Hash::make($request->password),
+        ]);
+    }
+
+    return redirect()->route('employees.index')->with('success', 'Cập nhật nhân viên thành công.');
   }
 
-  public function renderDelete($id) {
+  public function renderDelete($id)
+  {
     $departments = Department::get();
 
     $employee = Employee::findOrFail($id); // Lấy dữ liệu nhân viên theo ID
@@ -85,13 +100,14 @@ class EmployeeController extends Controller {
     ]);
   }
 
-  public function destroy($id) {
-    $employee = Employee::findOrFail($id);
+  public function destroy($id)
+  {
+    $employee = User::findOrFail($id);
     try {
       $employee->delete();
     } catch (\Exception $e) {
-      return redirect()->route('employee.index')->with(['err' => 'Không thể xóa!']);
+      return redirect()->route('employees.index')->with(['err' => 'Không thể xóa!']);
     }
-    return redirect()->route('employee.index')->with('success', 'Xóa thông tin thành công!');
+    return redirect()->route('employees.index')->with('success', 'Xóa thông tin thành công!');
   }
 }

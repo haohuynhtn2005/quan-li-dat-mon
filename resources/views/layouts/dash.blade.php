@@ -68,7 +68,7 @@
                         <a class="collapse-item" href="{{ route('food_ingredients.index') }}">Food ingredient</a>
                         <a class="collapse-item" href="{{ route('orders.index') }}">Order</a>
                         <a class="collapse-item" href="{{ route('department.index') }}">Department</a>
-                        <a class="collapse-item" href="{{ route('employee.index') }}">Employee</a>
+                        <a class="collapse-item" href="{{ route('employees.index') }}">Employee</a>
                         <a class="collapse-item" href="{{ route('customer.index') }}">Customer</a>
                     </div>
                 </div>
@@ -368,7 +368,7 @@
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="{{ route('profile.edit') }}">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                                 </a>
@@ -381,10 +381,13 @@
                                     Activity Log
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Logout
-                                </a>
+                                <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                                    @csrf
+                                    <button class="dropdown-item">
+                                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                        Logout
+                                    </button>
+                                </form>
                             </div>
                         </li>
 
