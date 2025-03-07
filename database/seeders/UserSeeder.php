@@ -26,6 +26,7 @@ class UserSeeder extends Seeder
             'role' => 'staff',
             'password' => Hash::make('1234'),
         ])->create();
+        User::factory(12)->state(['role' => 'staff'])->create();
         // User::factory()->state([
         //     'name' => 'Khách vãng lai',
         //     'email' => 'khachvanglai@mail.com',

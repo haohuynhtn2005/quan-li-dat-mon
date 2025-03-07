@@ -44,6 +44,7 @@ Route::middleware(['auth', 'verified', 'role:staff,admin'])->prefix('manage')->g
         return view('layouts.dash');
     })->name('manage.dashboard');
 
+    Route::resource('employees', EmployeeController::class);
     Route::resource('tables', TableController::class);
     Route::resource('food-types', FoodTypeController::class);
     Route::resource('food-items', FoodItemController::class);
@@ -69,13 +70,6 @@ Route::middleware(['auth', 'verified', 'role:staff,admin'])->prefix('manage')->g
     Route::get('/department/{id}/edit', [DepartmentController::class, 'edit'])->name('department.edit');
     Route::put('/department/{id}', [DepartmentController::class, 'update'])->name('department.update');
     Route::delete('/department/{id}', [DepartmentController::class, 'destroy'])->name('department.destroy');
-
-    Route::get('/employee', [EmployeeController::class, 'index'])->name('employee.index');
-    Route::get('/employee/create', [EmployeeController::class, 'create'])->name('employee.create');
-    Route::post('/employee', [EmployeeController::class, 'store'])->name('employee.store');
-    Route::get('/employee/edit/{id}', [EmployeeController::class, 'edit'])->name('employee.edit');
-    Route::put('/employee/{id}', [EmployeeController::class, 'update'])->name('employee.update');
-    Route::delete('/employee/{id}', [EmployeeController::class, 'destroy'])->name('employee.destroy');
 
     Route::get('/customer', [CustomerController::class, 'index'])->name('customer.index');
     Route::get('/customer/create', [CustomerController::class, 'create'])->name('customer.create');

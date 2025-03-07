@@ -35,7 +35,7 @@ class RegisteredUserController extends Controller
                 'name' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
                 'phone' => ['required', 'regex:/^0\d{9,10}$/'],
-                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+                'password' => ['required', Rules\Password::defaults(), 'confirmed'],
                 'address' => 'nullable|string|max:65535',
             ],
             [
@@ -63,6 +63,7 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'phone' => $request->phone,
             'password' => Hash::make($request->password),
+            
         ]);
 
         event(new Registered($user));

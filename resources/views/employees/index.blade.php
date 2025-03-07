@@ -8,10 +8,10 @@
   <!-- Page Heading -->
   <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">
-      Danh sách phòng ban
+      Danh sách nhân viên
     </h1>
     <div>
-      <a href="{{ route('employee.create') }}"
+      <a href="{{ route('employees.create') }}"
         class="btn btn-sm btn-primary shadow-sm">
         <i class="fas fa-download fa-sm text-white-50"></i>
         Tạo
@@ -29,20 +29,10 @@
               <th>Tên</th>
               <th>Email</th>
               <th>SDT</th>
-              <th>Phòng</th>
+              <th>Chức vụ</th>
               <th></th>
             </tr>
           </thead>
-          <tfoot>
-            <tr>
-              <th>ID</th>
-              <th>Tên</th>
-              <th>Email</th>
-              <th>SDT</th>
-              <th>Phòng</th>
-              <th></th>
-            </tr>
-          </tfoot>
           <tbody>
             @foreach ($employees as $employee)
               <tr>
@@ -50,38 +40,57 @@
                 <td>{{ $employee->name }}</td>
                 <td>{{ $employee->phone }}</td>
                 <td>{{ $employee->email }}</td>
-                <td>{{ $employee->department->name }}</td>
+                <td>{{ $employee->role == 'staff' ? 'Bồi bàn' : 'Đầu bếp' }}</td>
                 <td>
-                  <a href="{{ route('employee.edit', $employee->id) }}"
-                    class="btn btn-sm btn-primary">Edit</a>
+                  <a href="{{ route('employees.edit', $employee->id) }}"
+                    class="btn btn-sm btn-warning">Sửa</a>
                   <form
-                    action="{{ route('employee.destroy', $employee->id) }}"
+                    action="{{ route('employees.destroy', $employee->id) }}"
                     method="POST"
                     class="d-inline"
                     >
                     @method('DELETE')
                     @csrf
-                    <button class="btn btn-sm btn-danger">Delete</button>
+                    <button class="btn btn-sm btn-danger">Xóa</button>
                   </form>
                 </td>
               </tr>
             @endforeach
           </tbody>
         </table>
+          <!-- Pagination -->
+        <div class="d-flex justify-content-center">
+          {{ $employees->appends(request()->query())->links() }}
+        </div>
       </div>
     </div>
   </div>
 @endsection
 
 @section('script')
-  @if (session('err'))
-    <script>
-      Swal.fire({
-        icon: 'warning',
-        title: 'Lỗi',
-        text: '{{ session('err') }}',
-        confirmButtonColor: '#4e73df',
-      })
-    </script>
+  @if (session('success'))
+  <script>
+    Swal.fire({
+      icon: 'success',
+      title: 'Thành công',
+      text: '{{ session('success') }}',
+      confirmButtonColor: '#4e73df',
+    })
+  </script>
   @endif
+  @if (session('error'))
+  <script>
+    Swal.fire({
+      icon: 'warning',
+      title: 'Lỗi',
+      text: '{{ session('error') }}',
+      confirmButtonColor: '#4e73df',
+    })
+  </script>
+  @endif
+  <script>
+    @foreach ($errors->all() as $error)
+    console.warn(`{{ $error }}`)
+    @endforeach
+  </script>
 @endsection
