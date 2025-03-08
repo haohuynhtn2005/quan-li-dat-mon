@@ -1,17 +1,17 @@
 @extends('layouts.dash')
 
 @section('head')
-  <title>Nhân viên</title>
+  <title>Khách hàng</title>
 @endsection
 
 @section('content')
   <!-- Page Heading -->
   <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">
-      Danh sách nhân viên
+      Danh sách khách hàng
     </h1>
     <div>
-      <a href="{{ route('employees.create') }}"
+      <a href="{{ route('customers.create') }}"
         class="btn btn-sm btn-primary shadow-sm">
         <i class="fas fa-download fa-sm text-white-50"></i>
         Tạo
@@ -34,17 +34,17 @@
             </tr>
           </thead>
           <tbody>
-            @foreach ($employees as $idx => $employee)
+            @foreach ($customers as $idx => $customer)
               <tr>
                 <td>{{ $idx + 1 }}</td>
-                <td>{{ $employee->name }}</td>
-                <td>{{ $employee->email }}</td>
-                <td>{{ $employee->phone }}</td>
-                {{-- <td>{{ $employee->role == 'staff' ? 'Bồi bàn' : 'Đầu bếp' }}</td> --}}
+                <td>{{ $customer->name }}</td>
+                <td>{{ $customer->email }}</td>
+                <td>{{ $customer->phone }}</td>
+                {{-- <td>{{ $customer->role == 'staff' ? 'Bồi bàn' : 'Đầu bếp' }}</td> --}}
                 <td>
-                  <a href="{{ route('employees.edit', $employee->id) }}"
+                  <a href="{{ route('customers.edit', $customer->id) }}"
                     class="btn btn-sm btn-warning">Sửa</a>
-                  <form action="{{ route('employees.destroy', $employee->id) }}"
+                  <form action="{{ route('customers.destroy', $customer->id) }}"
                     method="POST" class="d-inline">
                     @method('DELETE')
                     @csrf
@@ -57,7 +57,7 @@
         </table>
         <!-- Pagination -->
         <div class="d-flex justify-content-center">
-          {{ $employees->appends(request()->query())->links() }}
+          {{ $customers->appends(request()->query())->links() }}
         </div>
       </div>
     </div>

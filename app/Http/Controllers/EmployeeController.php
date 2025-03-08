@@ -12,9 +12,19 @@ use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
 {
-  public function index()
+  public function index(Request $request)
   {
-    $employees = User::whereNotIn('role', ['admin', 'user'])->paginate(10);
+    $query = User::whereNotIn('role', ['admin', 'user']);
+    if ($request->has('search')) {
+      $search = $request->input('search');
+      $query->where(function ($q) use ($search) {
+        $q->where('name', 'LIKE', "%{$search}%")
+          ->orWhere('email', 'LIKE', "%{$search}%")
+          ->orWhere('phone', 'LIKE', "%{$search}%");
+      });
+    }
+
+    $employees = $query->orderBy('created_at', 'desc')->paginate(10);
     return view('employees.index')->with('employees', $employees);
   }
 
@@ -33,9 +43,9 @@ class EmployeeController extends Controller
       'name' => ['required', 'string', 'max:255'],
       'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
       'phone' => ['required', 'regex:/^0\d{9,10}$/'],
-      'password' => ['required', Rules\Password::defaults(), 'confirmed', ],
+      'password' => ['required', Rules\Password::defaults(), 'confirmed',],
       'address' => 'nullable|string|max:65535',
-      'role' => ['required', Rule::in(['user', 'staff', 'admin'])],
+      // 'role' => ['required', Rule::in(['user', 'staff', 'admin'])],
       // 'department_id' => 'required|exists:departments,id',
     ], [
       'name.required' => 'Tên nhân viên là bắt buộc.',
@@ -47,7 +57,7 @@ class EmployeeController extends Controller
       'department_id.exists' => 'Phòng ban không tồn tại.',
     ]);
 
-    User::create($request->all());
+    User::create(array_merge($request->all(), ['role' => 'staff']));
 
     return redirect()->route('employees.index')->with('success', 'Nhân viên đã được thêm thành công.');
   }
@@ -56,7 +66,7 @@ class EmployeeController extends Controller
   {
     $departments = Department::get();
 
-    $employee = User::whereNotIn('role', ['admin', 'user'])->findOrFail($id); // Lấy dữ liệu nhân viên theo ID
+    $employee = User::whereNotIn('role', ['admin', 'user'])->findOrFail($id);
     return view('employees.form', [
       'mode' => 'update',
       'employee' => $employee,
@@ -69,9 +79,9 @@ class EmployeeController extends Controller
   {
     $request->validate([
       'name' => 'required|string|max:255',
-      'email' => 'required|email|max:255|unique:employees,email,' . $id,
-      'phone' => 'required|string|max:15',
-      'password' => ['nullable', Rules\Password::defaults(), 'confirmed', ],
+      'email' => 'required|email|max:255|unique:users,email,' . $id,
+      'phone' => ['required', 'regex:/^0\d{9,10}$/'],
+      'password' => ['nullable', Rules\Password::defaults(), 'confirmed',],
       // 'department_id' => 'required|integer',
     ]);
 
@@ -80,9 +90,9 @@ class EmployeeController extends Controller
 
     // Update password only if provided
     if ($request->filled('password')) {
-        $employee->update([
-            'password' => Hash::make($request->password),
-        ]);
+      $employee->update([
+        'password' => Hash::make($request->password),
+      ]);
     }
 
     return redirect()->route('employees.index')->with('success', 'Cập nhật nhân viên thành công.');

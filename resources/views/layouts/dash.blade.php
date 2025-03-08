@@ -67,9 +67,9 @@
                         <a class="collapse-item" href="{{ route('ingredients.index') }}">Ingredient</a>
                         <a class="collapse-item" href="{{ route('food_ingredients.index') }}">Food ingredient</a>
                         <a class="collapse-item" href="{{ route('orders.index') }}">Order</a>
-                        <a class="collapse-item" href="{{ route('department.index') }}">Department</a>
+                        {{-- <a class="collapse-item" href="{{ route('department.index') }}">Department</a> --}}
                         <a class="collapse-item" href="{{ route('employees.index') }}">Employee</a>
-                        <a class="collapse-item" href="{{ route('customer.index') }}">Customer</a>
+                        <a class="collapse-item" href="{{ route('customers.index') }}">Customer</a>
                     </div>
                 </div>
             </li>
@@ -202,7 +202,7 @@
                             <input type="text" name="search" class="form-control bg-light border-0 small" placeholder="Search for..."
                                 aria-label="Search" aria-describedby="basic-addon2">
                             <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
+                                <button class="btn btn-primary">
                                     <i class="fas fa-search fa-sm"></i>
                                 </button>
                             </div>
