@@ -30,7 +30,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/menu', [HomeController::class, 'menu'])->name('menu');
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
     Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
@@ -43,8 +43,24 @@ Route::middleware(['auth', 'verified', 'role:staff,admin'])->prefix('manage')->g
     Route::get('/', function () {
         return view('layouts.dash');
     })->name('manage.dashboard');
+    Route::resource('orders', OrderController::class);
 
+    Route::put('/orders/update-paid/{order}', [OrderController::class, 'updatePaid'])->name('orders.updatePaid');
+    Route::patch('/orders/update-paid/{order}', [OrderController::class, 'updatePaid'])->name('orders.updatePaid');
+
+    Route::post('/orders/{order}/details', [OrderController::class, 'addOrderDetail'])->name('orders.addDetail');
+    Route::put('/order-details/{orderDetail}/status', [OrderController::class, 'updateOrderDetailStatus'])
+        ->name('order-details.updateStatus');
+    Route::patch('/order-details/{orderDetail}/status', [OrderController::class, 'updateOrderDetailStatus'])
+        ->name('order-details.updateStatus');
+    Route::delete('/order-details/{orderDetail}', [OrderController::class, 'removeOrderDetail'])
+        ->name('order-details.destroy');
+});
+
+
+Route::middleware(['auth', 'verified', 'role:admin'])->prefix('manage')->group(function () {
     Route::resource('employees', EmployeeController::class);
+    Route::resource('customers', CustomerController::class);
     Route::resource('tables', TableController::class);
     Route::resource('food-types', FoodTypeController::class);
     Route::resource('food-items', FoodItemController::class);
@@ -55,6 +71,7 @@ Route::middleware(['auth', 'verified', 'role:staff,admin'])->prefix('manage')->g
     Route::put('/orders/update-paid/{order}', [OrderController::class, 'updatePaid'])->name('orders.updatePaid');
     Route::patch('/orders/update-paid/{order}', [OrderController::class, 'updatePaid'])->name('orders.updatePaid');
     Route::post('/orders/{order}/details', [OrderController::class, 'addOrderDetail'])->name('orders.addDetail');
+
     Route::put('/order-details/{orderDetail}/status', [OrderController::class, 'updateOrderDetailStatus'])
         ->name('order-details.updateStatus');
     Route::patch('/order-details/{orderDetail}/status', [OrderController::class, 'updateOrderDetailStatus'])
@@ -70,13 +87,6 @@ Route::middleware(['auth', 'verified', 'role:staff,admin'])->prefix('manage')->g
     Route::get('/department/{id}/edit', [DepartmentController::class, 'edit'])->name('department.edit');
     Route::put('/department/{id}', [DepartmentController::class, 'update'])->name('department.update');
     Route::delete('/department/{id}', [DepartmentController::class, 'destroy'])->name('department.destroy');
-
-    Route::get('/customer', [CustomerController::class, 'index'])->name('customer.index');
-    Route::get('/customer/create', [CustomerController::class, 'create'])->name('customer.create');
-    Route::post('/customer', [CustomerController::class, 'store'])->name('customer.store');
-    Route::get('/customer/edit/{id}', [CustomerController::class, 'edit'])->name('customer.edit');
-    Route::put('/customer/{id}', [CustomerController::class, 'update'])->name('customer.update');
-    Route::delete('/customer/{id}', [CustomerController::class, 'destroy'])->name('customer.destroy');
 });
 
 Route::get('/invoice', [InvoiceController::class, 'index'])->name('invoice.index');

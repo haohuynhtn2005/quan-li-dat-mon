@@ -3,84 +3,94 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\User;
+use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules;
 
-class CustomerController extends Controller {
-  public function index() {
-    $customers = Customer::all();
-    return view('customer.index', compact('customers'));
+class CustomerController extends Controller
+{
+  public function index(Request $request)
+  {
+    $query = User::where('role', '=', 'user');
+    if ($request->has('search')) {
+      $search = $request->input('search');
+      $query->where(function ($q) use ($search) {
+        $q->where('name', 'LIKE', "%{$search}%")
+          ->orWhere('email', 'LIKE', "%{$search}%")
+          ->orWhere('phone', 'LIKE', "%{$search}%");
+      });
+    }
+    $customers = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+    return view('customers.index', compact('customers'));
   }
 
-  public function create() {
-    return view('customer.form', [
+  public function create()
+  {
+    return view('customers.form', [
       'mode' => 'create',
     ]);
   }
 
-  public function store(Request $request) {
-    // Validation cho các trường của customer
-    $validatedData = $request->validate([
-      'name' => 'required|string|max:255',
-      'email' => 'required|email|unique:customers,email',
-      'phone' => 'required|numeric|digits_between:10,15|unique:customers,phone',
+  public function store(Request $request)
+  {
+    $request->validate([
+      'name' => ['required', 'string', 'max:255'],
+      'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+      'phone' => ['required', 'regex:/^0\d{9,10}$/'],
+      'password' => ['required', Rules\Password::defaults(), 'confirmed',],
+      'address' => 'nullable|string|max:65535',
+      // 'role' => ['required', Rule::in(['user', 'staff', 'admin'])],
+      // 'department_id' => 'required|exists:departments,id',
     ], [
-      'name.required' => 'Tên khách hàng là bắt buộc.',
-      'name.string' => 'Tên khách hàng phải là chuỗi ký tự.',
-      'name.max' => 'Tên khách hàng không được vượt quá 255 ký tự.',
+      'name.required' => 'Tên nhân viên là bắt buộc.',
       'email.required' => 'Email là bắt buộc.',
-      'email.email' => 'Email phải đúng định dạng.',
-      'email.unique' => 'Email này đã được sử dụng.',
+      'email.email' => 'Email không đúng định dạng.',
+      'email.unique' => 'Email đã tồn tại.',
       'phone.required' => 'Số điện thoại là bắt buộc.',
-      'phone.numeric' => 'Số điện thoại phải là số.',
-      'phone.digits_between' => 'Số điện thoại phải từ 10 đến 15 chữ số.',
-      'phone.unique' => 'Số điện thoại này đã được sử dụng.',
+      'department_id.required' => 'Phòng ban là bắt buộc.',
+      'department_id.exists' => 'Phòng ban không tồn tại.',
     ]);
 
-    // Thêm dữ liệu vào cơ sở dữ liệu
-    Customer::create([
-      'name' => $validatedData['name'],
-      'email' => $validatedData['email'],
-      'phone' => $validatedData['phone'],
-    ]);
+    User::create(array_merge($request->all(), ['role' => 'user']));
 
-    return redirect()->route('customer.index')->with('success', 'Khách hàng đã được thêm thành công.');
+
+    return redirect()->route('customers.index')->with('success', 'Khách hàng đã được thêm thành công.');
   }
-  public function edit($id) {
-    $customer = Customer::findOrFail($id);
-    return view('customer.form', [
+  public function edit($id)
+  {
+    $customer = User::where('role', '=', 'user')->findOrFail($id);
+    return view('customers.form', [
       'mode' => 'update',
       'customer' => $customer,
     ]);
   }
-  public function update(Request $request, $id) {
-    $customer = Customer::findOrFail($id);
+  public function update(Request $request, $id)
+  {
     $request->validate([
       'name' => 'required|string|max:255',
-      'email' => [
-        'required',
-        'string',
-        'max:255',
-        Rule::unique('customers', 'email')->ignore($customer->id, 'id'),
-      ],
-      'phone' => 'required|numeric|digits_between:10,15|',
-    ], [
-      'name.required' => 'Tên khách hàng là bắt buộc.',
-      'name.string' => 'Tên khách hàng phải là chuỗi ký tự.',
-      'name.max' => 'Tên khách hàng không được vượt quá 255 ký tự.',
-      'email.required' => 'Email là bắt buộc.',
-      'email.email' => 'Email phải đúng định dạng.',
-      'email.unique' => 'Email này đã được sử dụng.',
-      'phone.required' => 'Số điện thoại là bắt buộc.',
-      'phone.numeric' => 'Số điện thoại phải là số.',
-      'phone.digits_between' => 'Số điện thoại phải từ 10 đến 15 chữ số.',
-      'phone.unique' => 'Số điện thoại này đã được sử dụng.',
+      'email' => 'required|email|max:255|unique:users,email,' . $id,
+      'phone' => ['required', 'regex:/^0\d{9,10}$/'],
+      'password' => ['nullable', Rules\Password::defaults(), 'confirmed',],
+      // 'department_id' => 'required|integer',
     ]);
-    $customer->update($request->all());
-    return redirect()->route('customer.index')->with('success', 'Cập nhật khách hàng thành công!');
+
+    $customer = User::findOrFail($id);
+    $customer->update($request->except(['password', 'role']));
+
+    // Update password only if provided
+    if ($request->filled('password')) {
+      $customer->update([
+        'password' => Hash::make($request->password),
+      ]);
+    }
+
+    return redirect()->route('customers.index')->with('success', 'Cập nhật khách hàng thành công!');
   }
 
-  public function renderDelete($id) {
+  public function renderDelete($id)
+  {
     $customer = Customer::findOrFail($id);
     return view('customer.form', [
       'mode' => 'delete',
@@ -88,14 +98,15 @@ class CustomerController extends Controller {
     ]);
   }
 
-  public function destroy($id) {
-    $customer = Customer::findOrFail($id);
+  public function destroy($id)
+  {
+    $customer = User::findOrFail($id);
     try {
       $customer->delete();
     } catch (\Throwable $th) {
-      return redirect()->route('customer.index')->with(['err' => 'Không thể xóa!']);
+      return redirect()->route('customers.index')->with(['error' => 'Không thể xóa!']);
     }
-    return redirect()->route('customer.index')->with('success', 'Khách hàng đã bị xóa!');
+    return redirect()->route('customers.index')->with('success', 'Khách hàng đã bị xóa!');
   }
 
 }
