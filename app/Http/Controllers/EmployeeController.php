@@ -98,18 +98,6 @@ class EmployeeController extends Controller
     return redirect()->route('employees.index')->with('success', 'Cập nhật nhân viên thành công.');
   }
 
-  public function renderDelete($id)
-  {
-    $departments = Department::get();
-
-    $employee = Employee::findOrFail($id); // Lấy dữ liệu nhân viên theo ID
-    return view('employee.form', [
-      'mode' => 'delete',
-      'employee' => $employee,
-      'departments' => $departments,
-    ]);
-  }
-
   public function destroy($id)
   {
     $employee = User::findOrFail($id);

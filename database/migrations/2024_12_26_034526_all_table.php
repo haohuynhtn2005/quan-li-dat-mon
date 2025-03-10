@@ -10,26 +10,26 @@ return new class extends Migration {
    */
   public function up(): void
   {
-    Schema::create('departments', function (Blueprint $table) {
-      $table->id();
-      $table->string('name');
-      $table->timestamps();
-    });
-    Schema::create('employees', function (Blueprint $table) {
-      $table->id();
-      $table->string('name');
-      $table->string('email')->unique();
-      $table->string('phone');
-      $table->foreignId('department_id')->constrained('departments');
-      $table->timestamps();
-    });
-    Schema::create('customers', function (Blueprint $table) {
-      $table->id();
-      $table->string('name');
-      $table->string('phone');
-      $table->string('email')->unique();
-      $table->timestamps();
-    });
+    // Schema::create('departments', function (Blueprint $table) {
+    //   $table->id();
+    //   $table->string('name');
+    //   $table->timestamps();
+    // });
+    // Schema::create('employees', function (Blueprint $table) {
+    //   $table->id();
+    //   $table->string('name');
+    //   $table->string('email')->unique();
+    //   $table->string('phone');
+    //   $table->foreignId('department_id')->constrained('departments');
+    //   $table->timestamps();
+    // });
+    // Schema::create('customers', function (Blueprint $table) {
+    //   $table->id();
+    //   $table->string('name');
+    //   $table->string('phone');
+    //   $table->string('email')->unique();
+    //   $table->timestamps();
+    // });
     Schema::create('tables', function (Blueprint $table) {
       $table->id();
       $table->string('name');
@@ -82,6 +82,29 @@ return new class extends Migration {
       $table->decimal('quantity', 10, 2);
       $table->timestamps();
     });
+    Schema::create('online_orders', function (Blueprint $table) {
+      $table->id();
+      $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Liên kết với bảng users
+      $table->string('phone');
+      $table->string('address'); // Thêm cột địa chỉ
+      $table->enum('status', ['chờ xác nhận', 'đã xác nhận', 'không nhận', 'đã giao', 'đã hủy'])->default('chờ xác nhận');
+      $table->text('li_do')->nullable();
+      $table->boolean('da_thanh_toan')->default(false);
+      $table->timestamps();
+    });
+
+    Schema::create('online_orders_items', function (Blueprint $table) {
+      $table->id();
+      $table->unsignedBigInteger('order_id');
+      $table->unsignedBigInteger('food_item_id');
+      $table->integer('quantity');
+      $table->decimal('price', 10, 2);
+      $table->timestamps();
+
+      $table->foreign('order_id')->references('id')->on('online_orders')->onDelete('cascade');
+      $table->foreign('food_item_id')->references('id')->on('food_items')->onDelete('cascade');
+    });
+
 
   }
 

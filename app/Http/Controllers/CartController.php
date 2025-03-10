@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\FoodItem;
 use App\Models\Cart;
+use App\Models\OnlineOrder;
 
 class CartController extends Controller
 {
@@ -22,7 +23,7 @@ class CartController extends Controller
         $userId = Auth::id();
 
         $cartItem = Cart::where('user_id', $userId)->where('food_item_id', $id)->first();
-        
+
         if ($cartItem) {
             $cartItem->quantity += 1;
             $cartItem->save();
@@ -62,9 +63,13 @@ class CartController extends Controller
 
     public function checkout()
     {
-        $userId = Auth::id();
-        $cart = Cart::where('user_id', $userId)->get();
-        $total = $cart->sum(fn($item) => $item->price * $item->quantity);
-        return view('cart.checkout', compact('cart', 'total'));
+        $cart = Cart::where('user_id', auth()->id())->get();
+
+        $total = collect($cart)->sum(fn($item) => $item->price * $item->quantity);
+
+        $orders = OnlineOrder::where('user_id', auth()->id())->latest()->get();
+
+        return view('cart.checkout', compact('cart', 'total', 'orders'));
     }
+
 }

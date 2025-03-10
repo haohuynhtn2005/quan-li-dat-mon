@@ -89,15 +89,6 @@ class CustomerController extends Controller
     return redirect()->route('customers.index')->with('success', 'Cập nhật khách hàng thành công!');
   }
 
-  public function renderDelete($id)
-  {
-    $customer = Customer::findOrFail($id);
-    return view('customer.form', [
-      'mode' => 'delete',
-      'customer' => $customer,
-    ]);
-  }
-
   public function destroy($id)
   {
     $customer = User::findOrFail($id);
