@@ -62,6 +62,11 @@
               <h5 class="card-title">{{ $food->name }}</h5>
               <p class="card-text">{{ $food->foodType->name }}</p>
               <p class="card-text">Giá: {{ number_format($food->price) }} VNĐ</p>
+              <!-- Nút thêm vào giỏ hàng -->
+              <form action="{{ route('cart.add', $food->id) }}" method="POST">
+                @csrf
+                <button type="submit" class="btn btn-success w-100">🛒 Thêm vào giỏ hàng</button>
+              </form>
             </div>
           </div>
         </div>
@@ -69,6 +74,7 @@
         <p class="text-center">Không tìm thấy món ăn nào!</p>
       @endforelse
     </div>
+
   </section>
 
   <!-- Contact Section -->
