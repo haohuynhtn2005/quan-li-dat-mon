@@ -14,7 +14,17 @@ class CartController extends Controller
         $userId = Auth::id();
         $cart = Cart::where('user_id', $userId)->get();
         $total = $cart->sum(fn($item) => $item->price * $item->quantity);
-        return view('cart.index', compact('cart', 'total'));
+
+        // Lấy danh sách ID món ăn trong giỏ hàng
+        $foodIds = $cart->pluck('food_item_id');
+
+        // Lấy danh sách món gợi ý cùng loại (trừ những món đã có trong giỏ hàng)
+        $suggestedFoods = FoodItem::whereNotIn('id', $foodIds)
+            ->inRandomOrder()
+            ->take(4)
+            ->get();
+
+        return view('cart.index', compact('cart', 'total', 'suggestedFoods'));
     }
 
     public function add(Request $request, $id)
@@ -34,6 +44,10 @@ class CartController extends Controller
                 'price' => $foodItem->price,
                 'quantity' => 1,
             ]);
+        }
+
+        if ($request->ajax()) {
+            return response()->json(['success' => 'Món ăn đã được thêm vào giỏ hàng!']);
         }
 
         return redirect()->route('cart.index')->with('success', 'Món ăn đã được thêm vào giỏ hàng!');

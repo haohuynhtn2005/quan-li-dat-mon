@@ -70,6 +70,7 @@
                         {{-- <a class="collapse-item" href="{{ route('department.index') }}">Department</a> --}}
                         <a class="collapse-item" href="{{ route('employees.index') }}">Employee</a>
                         <a class="collapse-item" href="{{ route('customers.index') }}">Customer</a>
+                        <a class="collapse-item" href="{{ route('online_orders.index') }}">Online_orders</a>
                     </div>
                 </div>
             </li>

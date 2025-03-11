@@ -9,7 +9,7 @@ class OnlineOrder extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'phone', 'status','address', 'li_do', 'da_thanh_toan'];
+    protected $fillable = ['user_id', 'phone', 'status', 'address', 'reason', 'paid'];
 
     public function user()
     {

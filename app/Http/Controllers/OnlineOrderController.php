@@ -48,7 +48,6 @@ class OnlineOrderController extends Controller
         $request->validate([
             'phone' => 'required',
             'address' => 'required',
-            'payment_method' => 'required',
         ]);
 
         DB::beginTransaction();
@@ -70,7 +69,7 @@ class OnlineOrderController extends Controller
                 'phone' => $request->phone,
                 'address' => $request->address,
                 'status' => 'chờ xác nhận',
-                'da_thanh_toan' => false,
+                'paid' => false,
             ]);
 
             Log::info('Đơn hàng đã tạo:', ['order_id' => $order->id]);
@@ -112,14 +111,14 @@ class OnlineOrderController extends Controller
     {
         $request->validate([
             'status' => 'required|string',
-            'li_do' => 'required_if:status,không nhận|string|nullable',
+            'reason' => 'required_if:status,không nhận|string|nullable',
         ], [
-            'li_do.required_if' => 'Vui lòng nhập lý do khi từ chối đơn hàng!',
+            'reason.required_if' => 'Vui lòng nhập lý do khi từ chối đơn hàng!',
         ]);
     
         $order = OnlineOrder::findOrFail($id);
         $order->status = $request->status;
-        $order->li_do = $request->status === 'không nhận' ? $request->li_do : null;
+        $order->reason = $request->status === 'không nhận' ? $request->reason : null;
         $order->save();
     
         return redirect()->back()->with('success', 'Cập nhật trạng thái thành công!');

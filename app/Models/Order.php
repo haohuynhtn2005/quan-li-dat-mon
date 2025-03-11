@@ -39,4 +39,8 @@ class Order extends Model
             // ->where('status', '!=', 'chuẩn bị')
             ->sum(\DB::raw('quantity * price'));
     }
+    public function details()
+    {
+        return $this->hasMany(OrderDetail::class, 'order_id', 'id');
+    }
 }

@@ -93,7 +93,7 @@ th, td {
                   
                 @endforeach
               </select>
-              <input type="text" name="li_do" class="reason-input" placeholder="Nhập lý do..." value="{{ $order->li_do }}" style="display: none; margin-top: 5px;"/>
+              <input type="text" name="reason" class="reason-input" placeholder="Nhập lý do..." value="{{ $order->reason }}" style="display: none; margin-top: 5px;"/>
               <button type="submit" class="btn btn-sm btn-success update-btn" style="display: none; margin-top: 5px;">Cập nhật</button>
             </form>
           </td>
@@ -101,48 +101,46 @@ th, td {
           <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
           <td>
             <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#orderDetailModal{{ $order->id }}">Xem chi tiết</button>
+            <!-- Modal Chi Tiết Đơn Hàng -->
+            <div class="modal fade" id="orderDetailModal{{ $order->id }}" tabindex="-1" role="dialog" aria-labelledby="orderDetailModalLabel{{ $order->id }}" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="orderDetailModalLabel{{ $order->id }}">Chi tiết đơn hàng</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Tên món</th>
+                                        <th>Giá</th>
+                                        <th>Số lượng</th>
+                                        <th>Tổng</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($order->items as $item)
+                                        <tr>
+                                            <td>{{ $item->food->name }}</td>
+                                            <td>{{ number_format($item->price, 0, ',', '.') }}đ</td>
+                                            <td>{{ $item->quantity }}</td>
+                                            <td>{{ number_format($item->price * $item->quantity, 0, ',', '.') }}đ</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
           </td>
           
-        </tr>
-        <tr>
-          <td><!-- Modal Chi Tiết Đơn Hàng -->
-         <div class="modal fade" id="orderDetailModal{{ $order->id }}" tabindex="-1" role="dialog" aria-labelledby="orderDetailModalLabel{{ $order->id }}" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="orderDetailModalLabel{{ $order->id }}">Chi tiết đơn hàng</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th>Tên món</th>
-                                                <th>Giá</th>
-                                                <th>Số lượng</th>
-                                                <th>Tổng</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach($order->items as $item)
-                                                <tr>
-                                                    <td>{{ $item->food->name }}</td>
-                                                    <td>{{ number_format($item->price, 0, ',', '.') }}đ</td>
-                                                    <td>{{ $item->quantity }}</td>
-                                                    <td>{{ number_format($item->price * $item->quantity, 0, ',', '.') }}đ</td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div></td>
         </tr>
         @endforeach
       </tbody>

@@ -9,11 +9,17 @@
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
     <link href="{{asset('vendor/fontawesome-free/css/all.min.css')}}" rel="stylesheet" type="text/css">
 </head>
+
 <style>
-    button:hover {
+    a {
+        text-decoration: none;
+        margin: 0 5px;
+    }
+
+    /* button:hover {
         background: pink;
         color: black;
-    }
+    } */
 
     * {
         transition: 0.5s;
@@ -27,27 +33,28 @@
 </style>
 
 <body>
-    @include('components.navbar')
+    
+@include('components.navbar')
     <!-- Hero Section -->
     <header class="">
         <div id="carouselExampleCaptions" class="carousel slide">
             <div class="carousel-inner">
                 <div class="carousel-item active">
                     <img src="{{ asset('img/spaces/space1.jpg') }}" class="d-block w-100" alt="..."
-                        style="height: 400px; object-fit: cover; object-position: bottom; filter: brightness(85%);">
+                        style="height: 630px; object-fit: cover; object-position: bottom; filter: brightness(85%);">
                     <div class="carousel-caption d-flex flex-column justify-content-center align-items-center h-100">
                         <h1 class="text-center">Welcome to Our Restaurant</h1>
                         <p class="lead text-center">Trải nghiệm không gian ấm cúng <br> Hương vị khó quên!</p>
-                        <a href="/" class="btn btn-outline-light mt-3">Đặt bàn ngay</a>
+                        <a href="/menu" class="btn btn-outline-light mt-3">Đặt món ngay</a>
                     </div>
                 </div>
                 @foreach ($slogans as $slogan)
                     <div class="carousel-item">
                         <img src="{{ asset($slogan['image']) }}" class="d-block w-100" alt="..."
-                            style="height: 400px; object-fit: cover; object-position: bottom; filter: brightness(70%);">
+                            style="height: 630px; object-fit: cover; object-position: bottom; filter: brightness(70%);">
                         <div class="carousel-caption d-flex flex-column justify-content-center align-items-center h-100">
                             <h1 class="text-center">{!! $slogan['slogan'] !!}</h1>
-                            <a href="/" class="btn btn-outline-light mt-3">Đặt bàn ngay</a>
+                            <!-- <a href="/" class="btn btn-outline-light mt-3">Đặt bàn ngay</a> -->
                         </div>
                     </div>
                 @endforeach
@@ -64,6 +71,34 @@
             </button>
         </div>
     </header>
+        <!-- Welcome -->
+        <div class="container-fluid">
+    <section class="row pt-5">
+        <div class="col-md-5 pb-5">
+            <div class="content m-2 col-10 ms-auto">
+                <h1 class="">Welcome to <br><span class="text-danger">Delima Restaurant</span></h1>
+                <p>Chào mừng bạn đến với không gian ấm cúng và gần gũi của chúng tôi! Ở đây, bạn sẽ tìm thấy những món
+                    ăn thơm ngon, đậm đà hương vị với mức giá phải chăng. Chúng tôi luôn chọn nguyên liệu tươi sạch
+                    nhất, chế biến với cả tâm huyết để mang đến cho bạn những bữa ăn không chỉ ngon miệng mà còn đầy đủ
+                    dinh dưỡng.
+                    <br> Dù bạn đến để thưởng thức một bữa ăn nhanh gọn hay muốn quây quần cùng gia đình, bạn bè, chúng
+                    tôi luôn sẵn sàng phục vụ với sự tận tâm và nụ cười thân thiện. Hãy thư giãn, tận hưởng không gian
+                    thoải mái và để chúng tôi mang đến cho bạn những trải nghiệm ẩm thực thật trọn vẹn!
+                </p>
+                <p class="text-dark-emphasis" style="text-align:right; font-family:'Dancing Script',cursive"> from Bui Thi Chi Thai</p>
+
+                <!-- <a href="" class="btn btn-danger rounded-1">RESERVATION</a> -->
+            </div>
+        </div>
+        <div class="col-md-7 pb-5 text-center my-auto">
+            <img class="me-3" width="35%" style="box-shadow: -10px -5px 0 gray;" src="{{asset('img/celeb/celeb.jpeg')}}" alt="">
+            <img class="ms-3" width="35%" style="box-shadow: -10px -5px 0 gray;" src="{{asset('img/celeb/celeb1.jpeg')}}" alt="">
+        </div>
+    </section>
+    </div>
+    <section>
+        <img src="{{asset('img/spaces/space4.jpg')}}" height="300px" width="100%" style="object-fit:cover;" alt="">
+    </section>
 
     <!-- Menu Section -->
     <section id="menu" class="container py-5">
@@ -85,12 +120,13 @@
     </section>
 
     <!-- About Section -->
-    <section class="py-5" style="background-image: url('{{ asset('img/spaces/space3.jpg') }}');
+    <section class="py-5" 
+            style="background-image: url('{{ asset('img/spaces/space3.jpg') }}');
            background-position:center;
            background-size:cover;
            color:white;">
         <div class="container">
-            <h2 class="text-center">ABOUT US</h2>
+            <h2 class="text-center">VỀ CHÚNG TÔI</h2>
             <div class="row">
                 <div class="col-md-6">
                     <h3>Team</h3>
@@ -114,24 +150,6 @@
         </div>
     </section>
 
-    <!-- Testimonials -->
-    <section class="container py-5">
-        <h2 class="text-center">What Our Customers Say</h2>
-        <div class="row">
-            <div class="col-md-6">
-                <blockquote class="blockquote">
-                    <p>"Absolutely the best dining experience I've had in years!"</p>
-                    <footer class="blockquote-footer">John Doe</footer>
-                </blockquote>
-            </div>
-            <div class="col-md-6">
-                <blockquote class="blockquote">
-                    <p>"Delicious food, great ambiance, and fantastic service!"</p>
-                    <footer class="blockquote-footer">Jane Smith</footer>
-                </blockquote>
-            </div>
-        </div>
-    </section>
 
     <!-- Contact Section -->
     <section id="contact" class="bg-dark text-white py-5 text-center">

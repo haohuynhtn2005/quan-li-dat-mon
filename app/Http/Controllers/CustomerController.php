@@ -8,24 +8,47 @@ use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
+use Illuminate\Support\Facades\DB;
 
 class CustomerController extends Controller
 {
   public function index(Request $request)
   {
-    $query = User::where('role', '=', 'user');
+     $query = User::where('role', 'user')
+        ->with(['orders.details'])
+        ->withCount('orders') // Đếm số đơn hàng của mỗi user
+        ->orderBy('created_at', 'desc');
+
+    // Thêm điều kiện tìm kiếm nếu có
     if ($request->has('search')) {
-      $search = $request->input('search');
-      $query->where(function ($q) use ($search) {
-        $q->where('name', 'LIKE', "%{$search}%")
-          ->orWhere('email', 'LIKE', "%{$search}%")
-          ->orWhere('phone', 'LIKE', "%{$search}%");
-      });
+        $search = $request->input('search');
+        $query->where(function ($q) use ($search) {
+            $q->where('name', 'LIKE', "%{$search}%")
+                ->orWhere('email', 'LIKE', "%{$search}%")
+                ->orWhere('phone', 'LIKE', "%{$search}%");
+        });
     }
-    $customers = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+
+    // Phân trang và xử lý dữ liệu
+    $customers = User::where('role', 'user')
+    ->with(['orders.details']) // Load danh sách đơn hàng và chi tiết đơn hàng
+    ->withCount('orders') // Đếm số đơn hàng của user
+    ->orderBy('created_at', 'desc')
+    ->paginate(10)
+    ->through(function ($user) {
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'phone' => $user->phone,
+            'total_orders' => $user->orders_count, 
+            'total_spent' => $user->orders->flatMap->details->sum(fn($detail) => $detail->quantity * $detail->price),
+        ];
+    });
+    
     return view('customers.index', compact('customers'));
   }
-
+ 
   public function create()
   {
     return view('customers.form', [

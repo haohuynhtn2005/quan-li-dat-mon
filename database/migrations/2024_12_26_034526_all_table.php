@@ -34,7 +34,7 @@ return new class extends Migration {
       $table->id();
       $table->string('name');
       $table->integer('seats')->default(4);
-      $table->enum('status', ['trống', 'đang ăn'])->default('trống');
+      $table->enum('status', ['trống', 'có khách'])->default('trống');
       $table->timestamps();
     });
     Schema::create('food_types', function (Blueprint $table) {
@@ -89,11 +89,10 @@ return new class extends Migration {
       $table->string('phone');
       $table->string('address'); // Thêm cột địa chỉ
       $table->enum('status', ['chờ xác nhận', 'đã xác nhận', 'không nhận', 'đã giao', 'đã hủy'])->default('chờ xác nhận');
-      $table->text('li_do')->nullable();
-      $table->boolean('da_thanh_toan')->default(false);
+      $table->text('reason')->nullable();
+      $table->boolean('paid')->default(false);
       $table->timestamps();
     });
-
     Schema::create('online_orders_items', function (Blueprint $table) {
       $table->id();
       $table->unsignedBigInteger('order_id');
