@@ -34,6 +34,7 @@ return new class extends Migration {
       $table->id();
       $table->string('name');
       $table->integer('seats')->default(4);
+      $table->enum('status', ['trống', 'đang ăn'])->default('trống');
       $table->timestamps();
     });
     Schema::create('food_types', function (Blueprint $table) {
@@ -54,8 +55,8 @@ return new class extends Migration {
       $table->id();
       $table->foreignId('user_id')->nullable()->constrained('users');
       $table->foreignId('table_id')->constrained('tables');
-      // $table->boolean('paid')->default(false);
-      $table->enum('status', ['đang ăn', 'đã ăn', 'đã thanh toán'])->default('đang ăn');
+      $table->boolean('paid')->default(false);
+      // $table->enum('status', ['đang ăn', 'đã ăn', 'đã thanh toán'])->default('đang ăn');
       $table->decimal('discount')->default(0);
       $table->timestamps();
     });
