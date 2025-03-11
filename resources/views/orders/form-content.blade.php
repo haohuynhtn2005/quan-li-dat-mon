@@ -88,6 +88,22 @@
 
       @if ($mode == 'update')
         <div class="mb-3">
+          <div class="custom-control custom-checkbox">
+            <input type="checkbox" name="paid" id="customCheck" class="custom-control-input"
+              value="1"
+              {{ $order->paid ? 'checked' : '' }}
+              >
+            <label class="custom-control-label" for="customCheck">
+              Đã thanh toán
+            </label>
+          </div>
+          @error('status')
+            <div class="text-danger">
+              {{ $message }}
+            </div>
+          @enderror
+        </div>
+        {{-- <div class="mb-3">
           <label for="status" class="form-label">
             Trạng thái
           </label>
@@ -112,7 +128,7 @@
               {{ $message }}
             </div>
           @enderror
-        </div>
+        </div> --}}
       @endif
 
       <!-- Nút hành động -->

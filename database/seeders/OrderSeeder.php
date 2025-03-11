@@ -27,7 +27,7 @@ class OrderSeeder extends Seeder
                         ->inRandomOrder()->first()?->id,
                 'created_at' => $date->addDay(),
                 'paid' => true,
-                'status' => 'đã thanh toán',
+                // 'status' => 'đã thanh toán',
             ])
                 ->has(
                     OrderDetail::factory()
@@ -48,7 +48,7 @@ class OrderSeeder extends Seeder
                     'status' => 'đang ăn',
                 ]);
             }
-            $orderDetailState = $status != 'đang ăn' ? ['status' => 'đã ra'] : [];
+            $orderDetailState = $paid ? ['status' => 'đã ra'] : [];
             Order::factory()->state([
                 'table_id' => $tableId,
                 'user_id' => $isUnregisteredGuest ? null
