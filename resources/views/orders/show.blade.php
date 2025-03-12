@@ -175,7 +175,7 @@
       Swal.fire({
         icon: 'warning',
         title: 'Lỗi',
-        text: '{{ session('error') }}',
+        html: {!! json_encode(session('error')) !!},
         confirmButtonColor: '#4e73df',
       })
     </script>
