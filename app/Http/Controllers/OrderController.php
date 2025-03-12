@@ -47,12 +47,18 @@ class OrderController extends Controller
             'table_id' => 'required|exists:tables,id',
             'discount' => 'numeric|min:0|max:100',
         ]);
-
+        $tables = Table::where('id', $request->table_id)->first();
+        if ($tables->status == 'có khách') {
+            return redirect()->route('orders.index')->with('error', 'Bàn đã có khách.');
+        }
         Order::create([
-            // 'status' => 'đang ăn',
-            ...$request->all(),
+            'user_id' => $request->user_id,
+            'table_id' => $request->table_id,
+            'discount' => $request->discount,
         ]);
-
+        $tables->update([
+            'status' => 'có khách',
+        ]);
         return redirect()->route('orders.index')->with('success', 'Tạo đơn thành công.');
     }
 
@@ -90,15 +96,21 @@ class OrderController extends Controller
             'discount' => 'numeric|min:0',
         ]);
         $allServed = $order->orderDetails()->where('status', '!=', 'đã ra')->doesntExist();
-        if (!$allServed && $request->has('paid')) {
+        $paid = $request->has('paid');
+        if (!$allServed && $paid) {
             return redirect()->back()
                 ->with('error', "Không thể thanh toán, có món chưa được phục vụ.");
         }
         $order->update([
-            'paid' => $request->has('paid'),
+            'paid' => $paid,
             // 'status' => $request->input('status'),
             ...$request->all(),
         ]);
+        if ($paid) {
+            Table::where('id', $order->table_id)->update([
+                'status' => 'trống',
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Cập nhật thành công.');
     }
@@ -119,10 +131,17 @@ class OrderController extends Controller
     public function updatePaid(Request $request, Order $order)
     {
         $allServed = $order->orderDetails()->where('status', '!=', 'đã ra')->doesntExist();
-        if (!$allServed && $request->has('paid')) {
+        $paid = $request->has('paid');
+        if (!$allServed && $paid) {
             return redirect()->route('orders.index')->with('error', 'Không thể thanh toán, có món chưa được phục vụ.');
         }
-        $order->update(['paid' => $request->has('paid')]);
+        $order->update(['paid' => $paid]);
+        if ($paid) {
+            Table::where('id', $order->table_id)->update([
+                'status' => 'trống',
+            ]);
+        }
+
         return redirect()->route('orders.index')->with('success', 'Cập nhật thanh toán thành công.');
     }
 

@@ -17,7 +17,7 @@ class OrderSeeder extends Seeder
      */
     public function run(): void
     {
-        $date = Carbon::create(2024, 1, 1);
+        $date = Carbon::create(2023, 1, 1);
         $quantity = 750;
         for ($day = 1; $day <= $quantity; $day++) {
             $isUnregisteredGuest = rand(1, 100) <= 20;
@@ -45,7 +45,7 @@ class OrderSeeder extends Seeder
             $paid = rand(1, 100) <= 30;
             if (!$paid) {
                 Table::where('id', $tableId)->update([
-                    'status' => 'đang ăn',
+                    'status' => 'có khách',
                 ]);
             }
             $orderDetailState = $paid ? ['status' => 'đã ra'] : [];

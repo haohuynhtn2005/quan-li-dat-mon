@@ -70,6 +70,7 @@
                     value="1"
                     {{ $order->paid ? 'checked' : '' }}
                     onclick="return confirmSweet(this)"
+                    {{ $order->paid ? 'disabled' : '' }}
                     >
                   <label class="custom-control-label" for="customCheck{{$order->id}}">
                     {{ $order->paid ? 'Đã thanh toán' : 'Chưa thanh toán' }}
@@ -116,7 +117,7 @@
             <td>
               <a href="{{ route('orders.show', [$order, ...request()->query()]) }}"
                 class="btn btn-sm btn-info">Đặt</a>
-              @if ($order->status == 'đang ăn' || $order->status == 'đã ăn')
+              @if (!$order->paid)
                 <button class="btn btn-sm btn-success"
                   onclick="showPaymentModal({{ $order->id }}, {{ ($order->total / 100) * (100 - $order->discount) }})">
                   Thanh toán
