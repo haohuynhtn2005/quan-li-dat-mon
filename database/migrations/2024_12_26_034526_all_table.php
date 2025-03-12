@@ -93,7 +93,6 @@ return new class extends Migration {
       $table->boolean('paid')->default(false);
       $table->timestamps();
     });
-
     Schema::create('online_orders_items', function (Blueprint $table) {
       $table->id();
       $table->unsignedBigInteger('order_id');

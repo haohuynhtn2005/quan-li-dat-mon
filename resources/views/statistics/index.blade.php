@@ -12,7 +12,7 @@
         Thống kê
       </a>
     </h1>
-    <div>
+  </div>
 
   @php
     $types = ['tuần', 'tháng', 'năm'];
@@ -35,55 +35,82 @@
             </option>
         @endforeach
     </select>
-    <select name="foodItemId" onchange="this.form.submit()"
+    <select name="foodTypeId" onchange="this.form.submit()"
       class="form-control form-control-sm d-inline mb-1" style="width: fit-content;">
       <option value="">Tất cả món</option>
-        @foreach($foodItems as $foodItem)
-            <option value="{{ $foodItem->id}}"
-              @if (urldecode(request('foodItemId')) == $foodItem->id)
+        @foreach($foodTypes as $foodType)
+            <option value="{{ $foodType->id}}"
+              @if (urldecode(request('foodTypeId')) == $foodType->id)
                 selected
               @endif
               >
-                {{ $foodItem->name }}
+                {{ $foodType->name }}
             </option>
         @endforeach
     </select>
     <button type="submit" class="btn btn-primary btn-sm">Ok</button>
   </form>
 
-  <h4>Order tại quán</h4>
-  <div class=" container-sm">
-    <canvas id="weeklyChart"></canvas>
-  </div>
+  <canvas id="weeklyChart"></canvas>
 
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       var ctx = document.getElementById('weeklyChart').getContext('2d');
-      ctx.canvas.height = 180; // Set height before creating the chart
+      ctx.canvas.height = 120; // Set height before creating the chart
       new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: {!! json_encode($labels) !!},
-          datasets: [{
-            label: 'Thống kê doanh thu (VND)',
-            data: {!! json_encode($data) !!},
-            backgroundColor: 'rgba(54, 162, 235, 0.6)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1
-          }]
+          labels: @json($labels),
+          datasets: [
+            {
+              label: 'Thống kê doanh thu (VND)',
+              data: @json($revenueData),
+              backgroundColor: 'rgba(54, 162, 235, 0.6)',
+              borderColor: 'rgba(54, 162, 235, 1)',
+              borderWidth: 1,
+              yAxisID: 'y-left' // Attach to left Y-axis
+            },
+            {
+              label: 'Number of Orders',
+              backgroundColor: 'rgba(255, 99, 132, 0.6)', // Red
+              borderColor: 'rgba(255, 99, 132, 1)',
+              borderWidth: 1,
+              data: @json($orderCountData),
+              yAxisID: 'y-right' // Attach to right Y-axis
+            }
+          ],
         },
         options: {
           responsive: true,
           scales: {
-            yAxes: [{
+            yAxes: [
               ticks: {
-                beginAtZero: true,
-                callback: function(value) {
-                  return value.toLocaleString('vi-VN') +
-                    ' ₫'; // Format as VND
+                  beginAtZero: true,
+                  callback: function(value) {
+                    return value.toLocaleString('vi-VN') +
+                      ' ₫'; // Format as VND
+                  }
+                },
+              },
+              {
+                id: 'y-left',
+                position: 'left',
+                ticks: { beginAtZero: true },
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Revenue ($)'
+                },
+              },
+              {
+                id: 'y-right',
+                position: 'right',
+                ticks: { beginAtZero: true },
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Number of Orders'
                 }
               }
-            }],
+            ],
           },
           tooltips: {
             callbacks: {
@@ -100,26 +127,7 @@
 @endsection
 
 @section('script')
-  @if (session('success'))
-    <script>
-      Swal.fire({
-        icon: 'success',
-        title: 'Thành công',
-        text: '{{ session('success') }}',
-        confirmButtonColor: '#4e73df',
-      })
-    </script>
-  @endif
-  @if (session('error'))
-    <script>
-      Swal.fire({
-        icon: 'warning',
-        title: 'Lỗi',
-        text: '{{ session('error') }}',
-        confirmButtonColor: '#4e73df',
-      })
-    </script>
-  @endif
+  @include('components.scripts.alert-script')
   <script>
     function confirmSweet(elem) {
       elem.setAttribute('new', elem.value)
@@ -141,24 +149,6 @@
         }
       });
       return false;
-    }
-    @foreach ($errors->all() as $error)
-      console.warn(`{{ $error }}`)
-    @endforeach
-
-    function showPaymentModal(orderId, price) {
-      const bankInfo = {
-        bankId: "970416", // Mã ngân hàng ACB
-        accountNo: "38752307", // Số tài khoản của bạn
-        accountName: "TRAN MINH QUOC THAI", // Tên tài khoản của bạn
-        amount: price,
-        content: `Thanh toan don hang ${orderId}` // Nội dung chuyển khoản
-      };
-      // Tạo chuỗi dữ liệu theo định dạng QR Pay VietQR
-      const qrData =
-        `https://api.vietqr.io/image/${bankInfo.bankId}-${bankInfo.accountNo}-compact.jpg?amount=${bankInfo.amount}&addInfo=${bankInfo.content}&accountName=${bankInfo.accountName}`;
-      document.getElementById('qrCode').src = qrData;
-      $('#paymentModal').modal('show');
     }
   </script>
 @endsection

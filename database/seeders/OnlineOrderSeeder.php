@@ -10,7 +10,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class Online_ordersSeeder extends Seeder{
+class OnlineOrderSeeder extends Seeder{
     public function run()
     {
         $data = [];
@@ -24,8 +24,8 @@ class Online_ordersSeeder extends Seeder{
                 'phone' => '09876543' . rand(10, 99),
                 'address' => 'Địa chỉ mẫu ' . $i,
                 'status' => rand(0, 1),
-                'li_do' => 'Lý do đơn hàng ' . $i,
-                'da_thanh_toan' => $randomDate->isToday() ? 0 : 1, // Chỉ đơn hôm nay chưa thanh toán
+                'reason' => 'Lý do đơn hàng ' . $i,
+                'paid' => $randomDate->isToday() ? 0 : 1, // Chỉ đơn hôm nay chưa thanh toán
                 'created_at' => $randomDate,
                 'updated_at' => $randomDate,
             ];
