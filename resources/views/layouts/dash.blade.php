@@ -41,19 +41,76 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="{{ route('statistics.index') }}">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Thống kê</span></a>
+                <a class="nav-link" href="{{ route('manage.dashboard') }}">
+                    <i class="fas fa-qrcode"></i>
+                    <span>Tổng quan</span></a>
             </li>
+
+            
+            @if(auth()->user()->role == 'admin')
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('statistics.index') }}">
+                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                        <span>Thống kê</span></a>
+                </li>
+            @endif
 
             <!-- Divider -->
             <hr class="sidebar-divider">
 
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('orders.index') }}">
+                    <i class="fas fa-cheese"></i>
+                    <span>Order</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('online_orders.index') }}">
+                    <i class="fas fa-truck"></i>
+                    <span>Online order</span></a>
+            </li>
+            @if(auth()->user()->role == 'admin')
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('tables.index') }}">
+                        <i class="fas fa-fw fa-table"></i>
+                        <span>Table</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('food-types.index') }}">
+                        <i class="fas fa-boxes"></i>
+                        <span>Food type</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('food-items.index') }}">
+                        <i class="fas fa-bone"></i>
+                        <span>Food item</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('ingredients.index') }}">
+                        <i class="fas fa-th-large"></i>
+                        <span>Ingredient</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('food_ingredients.index') }}">
+                        <i class="fas fa-journal-whills"></i>
+                        <span>Food ingredient</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('employees.index') }}">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Employee</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('customers.index') }}">
+                        <i class="fas fa-grin-alt"></i>
+                        <span>Customer</span></a>
+                </li>
+            @endif
+
             <!-- Heading -->
-            <div class="sidebar-heading">
+            <div class="sidebar-heading d-none">
                 Dữ liệu
             </div>
-            <li class="nav-item">
+            <li class="nav-item d-none">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#database"
                     aria-expanded="true" aria-controls="collapseTwo">
                     <i class="fas fa-fw fa-database"></i>
@@ -75,52 +132,13 @@
                 </div>
             </li>
 
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('orders.index') }}">
-                    <i class="fas fa-cheese"></i>
-                    <span>Order</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('online_orders.index') }}">
-                    <i class="fas fa-truck"></i>
-                    <span>Online order</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('tables.index') }}">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Table</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('food-types.index') }}">
-                    <i class="fas fa-boxes"></i>
-                    <span>Food type</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('food-items.index') }}">
-                    <i class="fas fa-bone"></i>
-                    <span>Food item</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('ingredients.index') }}">
-                    <i class="fas fa-th-large"></i>
-                    <span>Ingredient</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('food_ingredients.index') }}">
-                    <i class="fas fa-journal-whills"></i>
-                    <span>Food ingredient</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('employees.index') }}">
-                    <i class="fas fa-user-tie"></i>
-                    <span>Employee</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('customers.index') }}">
-                    <i class="fas fa-grin-alt"></i>
-                    <span>Customer</span></a>
-            </li>
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
 
+            <!-- Sidebar Toggler (Sidebar) -->
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
 
         </ul>
         <!-- End of Sidebar -->

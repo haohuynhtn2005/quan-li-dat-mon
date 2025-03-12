@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FoodIngredientController;
 use App\Http\Controllers\FoodItemController;
 use App\Http\Controllers\FoodTypeController;
@@ -43,9 +44,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::middleware(['auth', 'verified', 'role:staff,admin'])->prefix('manage')->group(function () {
-    Route::get('/', function () {
-        return view('layouts.dash');
-    })->name('manage.dashboard');
+    Route::get('/', [DashboardController::class, 'overview'])->name('manage.dashboard');
 
     Route::resource('orders', OrderController::class);
     Route::put('/orders/update-paid/{order}', [OrderController::class, 'updatePaid'])->name('orders.updatePaid');

@@ -20,7 +20,7 @@ class OnlineOrderFactory extends Factory
         $statuses = ['chờ xác nhận', 'đã xác nhận', 'không nhận', 'đã giao', 'đã hủy'];
 
         return [
-            'user_id' => User::where('role', 'user')->inRandomOrder()->first()?->id,
+            'user_id' => User::inRandomOrder()->first()?->id,
             'phone' => $this->faker->numerify('0#########'),
             'address' => $this->faker->address(),
             'status' => $this->faker->randomElement($statuses),
