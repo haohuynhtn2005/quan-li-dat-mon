@@ -56,7 +56,9 @@
               <td>
                 <form action="{{ route('cart.update', $item->food_item_id) }}" method="POST">
                   @csrf
-                  <input type="number" name="quantity" value="{{ $item->quantity }}" min="1" style="width: 50px;">
+                  <input type="number" name="quantity" 
+                    value="{{ $item->quantity }}" min="1"
+                    class="form-control form-control-sm d-inline" style="width: 50px;">
                   <button type="submit" class="btn btn-sm btn-primary">Cập nhật</button>
                 </form>
               </td>

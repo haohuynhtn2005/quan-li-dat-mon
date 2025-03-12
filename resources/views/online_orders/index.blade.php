@@ -82,11 +82,12 @@ th, td {
           <td>{{ $order->phone }}</td>
           <td>{{ $order->address }}</td>
           <td>
-            <form method="POST" action="{{ route('online_orders.update_status', $order->id) }}" class="status-form">
+            <form method="POST" action="{{ route('online_orders.update_status', $order->id) }}"
+              class="status-form m-0">
               @csrf
               @method('PATCH')
               <select name="status" data-order-id="{{ $order->id }}"
-                class="form-control form-control-sm" style="width: fit-content;">
+                class="status-select form-control form-control-sm" style="width: fit-content;">
                 @foreach($statuses as $status)
                   <option value="{{ $status }}" @if($order->status == $status) selected @endif>
                     {{ Str::ucfirst($status) }}
@@ -94,7 +95,9 @@ th, td {
                   
                 @endforeach
               </select>
-              <input type="text" name="reason" class="reason-input" placeholder="Nhập lý do..." value="{{ $order->reason }}" style="display: none; margin-top: 5px;"/>
+              <input type="text" name="reason" class="reason-input form-control form-control-sm" 
+                placeholder="Nhập lý do..." value="{{ $order->reason }}"
+                style="display: none; margin-top: 5px;"/>
               <button type="submit" class="btn btn-sm btn-success update-btn" style="display: none; margin-top: 5px;">Cập nhật</button>
             </form>
           </td>

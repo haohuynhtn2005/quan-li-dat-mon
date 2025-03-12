@@ -67,7 +67,6 @@
                         <th>SĐT</th>
                         <th>Địa chỉ</th>
                         <th>Trạng thái</th>
-                        <th>Lý do</th>
                         <th>Ngày tạo</th>
                         <th>Thanh toán</th>
                         <th>Thao tác</th>
@@ -80,8 +79,7 @@
                             <td>{{ $order->user->name }}</td>
                             <td>{{ $order->phone }}</td>
                             <td>{{ $order->address }}</td>
-                            <td>{{ $order->status }}</td>
-                            <td>{{ $order->status == 'không nhận' ? $order->reason : '-' }}</td>
+                            <td>{{ $order->status }} {{ $order->status == 'không nhận' ? " - $order->reason" : '' }}</td>
                             <td>{{ $order->created_at }}</td>
                             <td>{{ $order->paid ? 'Đã thanh toán':'Chưa thanh toán' }}</td>
                             <td>

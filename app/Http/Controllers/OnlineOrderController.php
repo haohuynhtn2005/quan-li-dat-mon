@@ -126,9 +126,6 @@ class OnlineOrderController extends Controller
     }
 
 
-
-
-
     /**
      * Show the form for editing the specified resource.
      */
@@ -160,7 +157,12 @@ class OnlineOrderController extends Controller
             return redirect()->back()->with('error', 'Đơn hàng không tồn tại.');
         }
 
-        // Kiểm tra nếu trạng thái đơn hàng có thể hủy được
+        // Ensure the authenticated user owns this order
+        if (auth()->id() !== $order->user_id) {
+            return redirect()->back()->with('error', 'Bạn không có quyền hủy đơn hàng này.');
+        }
+
+        // Check if the order is in a cancelable status
         if ($order->status !== 'chờ xác nhận') {
             return redirect()->back()->with('error', 'Chỉ có thể hủy đơn hàng khi đang chờ xác nhận.');
         }
