@@ -29,6 +29,7 @@
               <th>Tên</th>
               <th>Email</th>
               <th>SDT</th>
+              <th>Tổng đơn</th>
               {{-- <th>Chức vụ</th> --}}
               <th></th>
             </tr>
@@ -37,14 +38,17 @@
             @foreach ($customers as $idx => $customer)
               <tr>
                 <td>{{ $idx + 1 }}</td>
-                <td>{{ $customer->name }}</td>
-                <td>{{ $customer->email }}</td>
-                <td>{{ $customer->phone }}</td>
+                <td>{{ $customer['name'] }}</td>
+                <td>{{ $customer['email'] }}</td>
+                <td>{{ $customer['phone'] }}</td>
                 {{-- <td>{{ $customer->role == 'staff' ? 'Bồi bàn' : 'Đầu bếp' }}</td> --}}
                 <td>
-                  <a href="{{ route('customers.edit', $customer->id) }}"
+                  {{ number_format($customer['total_spent']) }}
+                </td>
+                <td>
+                  <a href="{{ route('customers.edit', $customer['id']) }}"
                     class="btn btn-sm btn-warning">Sửa</a>
-                  <form action="{{ route('customers.destroy', $customer->id) }}"
+                  <form action="{{ route('customers.destroy', $customer['id']) }}"
                     method="POST" class="d-inline">
                     @method('DELETE')
                     @csrf

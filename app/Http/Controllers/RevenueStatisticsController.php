@@ -118,7 +118,7 @@ class RevenueStatisticsController extends Controller
     {
         return
             DB::table('orders')
-                ->where('orders.status', 'đã thanh toán')
+                ->where('paid', true)
                 ->whereBetween('orders.created_at', [$startDate, $endDate])
                 ->joinSub(
                     DB::table('order_details')

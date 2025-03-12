@@ -30,6 +30,7 @@
                   <th>ID</th>
                   <th>Tên</th>
                   <th>Số chỗ</th>
+                  <td>Trạng thái</td>
                   <th>Thao tác</th>
                 </tr>
               </thead>
@@ -47,6 +48,7 @@
                     <td>{{ $table->id }}</td>
                     <td>{{ $table->name }}</td>
                     <td>{{ $table->seats }}</td>
+                    <td>{{ $table->status }}</td>
                     <td>
                       <a href="{{ route('tables.edit', $table->id) }}"
                         class="btn btn-sm btn-warning">Sửa</a>
