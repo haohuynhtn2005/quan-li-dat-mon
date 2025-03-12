@@ -157,14 +157,31 @@ class OrderController extends Controller
                 ->with('error', 'Khách đã thanh toán, không thể thêm');
         }
 
+        $insufficientIngredients = [];
         $foodItem = FoodItem::with('ingredients')->findOrFail($request->food_item_id);
         foreach ($foodItem->ingredients as $ingredient) {
             $requiredQuantity = $ingredient->pivot->quantity * $request->quantity; // Adjust for order quantity
             if ($ingredient->quantity < $requiredQuantity) {
-                return redirect()->route('orders.show', $order->id)
-                    ->with('error', "Không đủ nguyên liệu: {$ingredient->name}");
+                $insufficientIngredients[] = [
+                    'name' => $ingredient->name,
+                    'in_stock' => $ingredient->quantity,
+                    'required' => $requiredQuantity,
+                    'shortage' => $requiredQuantity - $ingredient->quantity,
+                ];
+                // return redirect()->route('orders.show', $order->id)
+                //     ->with('error', "Không đủ nguyên liệu: {$ingredient->name}");
+            } else {
+                $ingredient->decrement('quantity', $requiredQuantity);
             }
-            $ingredient->decrement('quantity', $requiredQuantity);
+        }
+
+        if (!empty($insufficientIngredients)) {
+            $message = "Không đủ nguyên liệu:<br>";
+            foreach ($insufficientIngredients as $item) {
+                $message .= " {$item['name']}: còn {$item['in_stock']}, cần {$item['required']}, thiếu {$item['shortage']}<br>";
+            }
+        
+            return redirect()->route('orders.show', $order->id)->with('error', $message);
         }
 
         OrderDetail::create([
