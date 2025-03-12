@@ -67,10 +67,10 @@
                         <a class="collapse-item" href="{{ route('ingredients.index') }}">Ingredient</a>
                         <a class="collapse-item" href="{{ route('food_ingredients.index') }}">Food ingredient</a>
                         <a class="collapse-item" href="{{ route('orders.index') }}">Order</a>
+                        <a class="collapse-item" href="{{ route('online_orders.index') }}">Online order</a>
                         {{-- <a class="collapse-item" href="{{ route('department.index') }}">Department</a> --}}
                         <a class="collapse-item" href="{{ route('employees.index') }}">Employee</a>
                         <a class="collapse-item" href="{{ route('customers.index') }}">Customer</a>
-                        <a class="collapse-item" href="{{ route('online_orders.index') }}">Online_orders</a>
                     </div>
                 </div>
             </li>

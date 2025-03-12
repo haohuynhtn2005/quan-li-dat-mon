@@ -19,7 +19,7 @@
   @endphp
   <form method="GET" class="mb-4">
     {{-- <label>Select Date:</label> --}}
-    <input type="date" name="date"
+    <input type="date" name="date" onchange="this.form.submit()"
       value="{{ request('date') ?? now()->toDateString() }}"
       class="form-control form-control-sm d-inline" style="width: fit-content"
       >
@@ -48,10 +48,40 @@
             </option>
         @endforeach
     </select>
-    <button type="submit" class="btn btn-primary btn-sm">Ok</button>
+    {{-- <button type="submit" class="btn btn-primary btn-sm">Ok</button> --}}
   </form>
 
   <canvas id="weeklyChart"></canvas>
+
+  <table class="table">
+    <thead>
+        <tr>
+            <th>Hình</th>
+            <th>Tên</th>
+            <th>Giá</th>
+            <th>Cửa hàng</th>
+            <th>Online</th>
+            <th>Tổng SL</th>
+            <th>Tổng tiền</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ($topItems as $item)
+            <tr>
+                <td>
+                  <img src="{{ asset('storage/' . $item->image) }}" alt=""
+                    style="width: 2em; aspect-ratio: 1; object-fit:contain">
+                </td>
+                <td>{{ $item->name }}</td>
+                <td>{{ number_format($item->price, 0, ',', '.') }}₫</td>
+                <td>{{ $item->sold_in_store }}</td>
+                <td>{{ $item->sold_online }}</td>
+                <td>{{ $item->total_sold }}</td>
+                <td>{{ number_format($item->total_revenue, 0, ',', '.') }}₫</td>
+            </tr>
+        @endforeach
+    </tbody>
+</table>
 
   <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -60,66 +90,47 @@
       new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: @json($labels),
-          datasets: [
-            {
-              label: 'Thống kê doanh thu (VND)',
-              data: @json($revenueData),
-              backgroundColor: 'rgba(54, 162, 235, 0.6)',
-              borderColor: 'rgba(54, 162, 235, 1)',
-              borderWidth: 1,
-              yAxisID: 'y-left' // Attach to left Y-axis
-            },
-            {
-              label: 'Number of Orders',
-              backgroundColor: 'rgba(255, 99, 132, 0.6)', // Red
-              borderColor: 'rgba(255, 99, 132, 1)',
-              borderWidth: 1,
-              data: @json($orderCountData),
-              yAxisID: 'y-right' // Attach to right Y-axis
-            }
-          ],
+            labels: @json($labels),
+            datasets: [
+                {
+                  label: 'Doanh thu tại cửa hàng',
+                  data: @json($inStoreRevenueData),
+                  backgroundColor: 'rgba(54, 162, 235, 0.6)', // Blue
+                  borderWidth: 1
+                },
+                {
+                  label: 'Doanh thu online',
+                  data: @json($onlineRevenueData),
+                  backgroundColor: 'rgba(255, 99, 132, 0.6)', // Red
+                  borderWidth: 1
+                }
+            ]
         },
         options: {
-          responsive: true,
-          scales: {
-            yAxes: [
-              ticks: {
+            responsive: true,
+            scales: {
+              xAxes: [{
+                stacked: true
+              }],
+              yAxes: [{
+                stacked: true,
+                ticks: {
                   beginAtZero: true,
-                  callback: function(value) {
-                    return value.toLocaleString('vi-VN') +
-                      ' ₫'; // Format as VND
+                  callback: function(value, index, values) {
+                    return value.toLocaleString('vi-VN') + ' đ';
                   }
                 },
-              },
-              {
-                id: 'y-left',
-                position: 'left',
-                ticks: { beginAtZero: true },
-                scaleLabel: {
-                    display: true,
-                    labelString: 'Revenue ($)'
-                },
-              },
-              {
-                id: 'y-right',
-                position: 'right',
-                ticks: { beginAtZero: true },
-                scaleLabel: {
-                    display: true,
-                    labelString: 'Number of Orders'
+              }]
+            },
+            tooltips: {
+              callbacks: {
+                label: function(tooltipItem, data) {
+                  var datasetLabel = data.datasets[tooltipItem.datasetIndex].label || '';
+                  var value = tooltipItem.yLabel.toLocaleString('vi-VN') + ' đ';
+                  return datasetLabel + ': ' + value;
                 }
               }
-            ],
-          },
-          tooltips: {
-            callbacks: {
-              label: function(tooltipItem, data) {
-                return tooltipItem.yLabel.toLocaleString('vi-VN') +
-                  " ₫";
-              }
             }
-          }
         }
       });
     });

@@ -39,8 +39,34 @@ class Order extends Model
             // ->where('status', '!=', 'chuẩn bị')
             ->sum(\DB::raw('quantity * price'));
     }
-    public function details()
+
+    public function getBillAttribute()
     {
-        return $this->hasMany(OrderDetail::class, 'order_id', 'id');
+        $groupedItems = $this->orderDetails
+            ->groupBy('food_item_id')
+            ->map(function ($items) {
+                $firstItem = $items->first();
+                $totalQuantity = $items->sum('quantity');
+                $subtotal = $totalQuantity * $firstItem->price;
+
+                return [
+                    'food_item' => $firstItem->foodItem->name,
+                    'quantity' => $totalQuantity,
+                    'price' => $firstItem->price,
+                    'subtotal' => $subtotal,
+                ];
+            })
+            ->values(); // Reset array indexes
+
+        $totalPrice = $this->total;
+        $discountedPrice = $totalPrice / 100 * (100 - $this->discount);
+
+        return [
+            'total_price' => $totalPrice,
+            'discount' => $this->discount,
+            'final_amount' => $discountedPrice,
+            'items' => $groupedItems
+        ];
     }
+
 }
