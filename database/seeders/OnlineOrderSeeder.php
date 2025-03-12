@@ -23,9 +23,7 @@ class OnlineOrderSeeder extends Seeder
             $currentDate = $startDate->copy()->addDays($i);
             $orderCount = rand(1, 3);
             for ($j = 0; $j < $orderCount; $j++) {
-                $userId = User::where('role', '=', 'user')->inRandomOrder()->first()?->id;
                 $onlineOrder = OnlineOrder::factory()->state([
-                    'user_id' => $userId,
                     'created_at' => $currentDate,
                     'paid' => true,
                     'status' => 'đã giao',
@@ -40,9 +38,7 @@ class OnlineOrderSeeder extends Seeder
 
         $date = Carbon::now()->subDay();
         for ($i = 0; $i < 10; $i++) {
-            $user = User::where('role', '=', 'user')->inRandomOrder()->first()?->id;
             $onlineOrder = OnlineOrder::factory()->state([
-                'user_id' => $user,
                 'created_at' => $date->addMinute(),
                 'paid' => rand(0, 1),
                 'status' => collect(['chờ xác nhận', 'đã xác nhận', 'không nhận', 'đã giao', 'đã hủy'])->random(),
