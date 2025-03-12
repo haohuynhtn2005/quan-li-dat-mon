@@ -39,6 +39,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
     Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
     Route::post('/cart/checkout', [OnlineOrderController::class, 'store'])->name('cart.processCheckout');
+    Route::delete('/online_orders/cancel/{id}', action: [OnlineOrderController::class, 'cancel'])->name('online_orders.cancel');
 });
 
 Route::middleware(['auth', 'verified', 'role:staff,admin'])->prefix('manage')->group(function () {
@@ -61,8 +62,6 @@ Route::middleware(['auth', 'verified', 'role:staff,admin'])->prefix('manage')->g
     Route::get('/online-orders/{id}/items', [OnlineOrderController::class, 'getOrderItems']);
     Route::patch('/online-orders/{id}/update-status', [OnlineOrderController::class, 'updateStatus'])
         ->name('online_orders.update_status');
-    Route::delete('/online_orders/cancel/{id}', action: [OnlineOrderController::class, 'cancel'])->name('online_orders.cancel');
-
 });
 
 Route::middleware(['auth', 'verified', 'role:admin'])->prefix('manage')->group(function () {
