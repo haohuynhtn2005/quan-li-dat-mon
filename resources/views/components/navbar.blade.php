@@ -26,27 +26,27 @@
             <a class="nav-link" href="{{ route('cart.checkout') }}">Đơn mua</a>
           </li>
           @guest
-      @endguest
+          @endguest
           @auth
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          {{ auth()->user()->name }}
-          </a>
-          <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Hồ sơ</a></li>
-          <form method="POST" action="{{ route('logout') }}" class="d-inline">
-            @csrf
-            <button class="dropdown-item">Đăng xuất
-            </button>
-          </form>
-          </ul>
-        </li>
-        @if(auth()->user() && in_array(auth()->user()->role, ['admin', 'staff']))
-        <li class="nav-item">
-        <a class="nav-link" href="{{ route('manage.dashboard') }}">Quản lý</a>
-        </li>
-      @endif
-      @endauth
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              {{ auth()->user()->name }}
+              </a>
+              <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Hồ sơ</a></li>
+              <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                @csrf
+                <button class="dropdown-item">Đăng xuất
+                </button>
+              </form>
+              </ul>
+            </li>
+            @if(auth()->user() && in_array(auth()->user()->role, ['admin', 'staff']))
+              <li class="nav-item">
+              <a class="nav-link" href="{{ route('manage.dashboard') }}">Quản lý</a>
+              </li>
+            @endif
+          @endauth
         </ul>
         <!-- Giỏ hàng -->
         <a href="{{ route('cart.index') }}" class="me-3">
