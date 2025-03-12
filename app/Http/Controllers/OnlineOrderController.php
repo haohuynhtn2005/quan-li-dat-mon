@@ -48,7 +48,6 @@ class OnlineOrderController extends Controller
         $request->validate([
             'phone' => 'required',
             'address' => 'required',
-            'payment_method' => 'required',
         ]);
 
         DB::beginTransaction();

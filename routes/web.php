@@ -66,7 +66,6 @@ Route::middleware(['auth', 'verified', 'role:staff,admin'])->prefix('manage')->g
 
 });
 
-
 Route::middleware(['auth', 'verified', 'role:admin'])->prefix('manage')->group(function () {
     Route::resource('employees', EmployeeController::class);
     Route::resource('customers', CustomerController::class);
