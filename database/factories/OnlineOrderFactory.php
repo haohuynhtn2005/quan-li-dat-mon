@@ -21,7 +21,7 @@ class OnlineOrderFactory extends Factory
 
         return [
             'user_id' => User::where('role', 'user')->inRandomOrder()->first()?->id,
-            'phone' => $this->faker->phoneNumber(),
+            'phone' => $this->faker->numerify('0#########'),
             'address' => $this->faker->address(),
             'status' => $this->faker->randomElement($statuses),
             'reason' => $this->faker->boolean(10) ? $this->faker->sentence() : null, // 10% chance of reason

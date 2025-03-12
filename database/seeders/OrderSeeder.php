@@ -21,10 +21,10 @@ class OrderSeeder extends Seeder
         $endDate = Carbon::now()->subDay();
         $totalDays = $startDate->diffInDays($endDate);
         // $quantity = 750;
-        for ($i = 0; $i <= $totalDays; $i++) {
+        for ($i = 1; $i <= $totalDays; $i++) {
             $currentDate = $startDate->copy()->addDays($i);
 
-            $orderCount = rand(1, 3); // Generate 3 to 5 orders per day
+            $orderCount = rand(1, 3);
             for ($j = 0; $j < $orderCount; $j++) {
                 $isUnregisteredGuest = rand(1, 100) <= 20;
                 Order::factory()->state([
@@ -33,7 +33,6 @@ class OrderSeeder extends Seeder
                             ->inRandomOrder()->first()?->id,
                     'created_at' => $currentDate,
                     'paid' => true,
-                    // 'status' => 'đã thanh toán',
                 ])
                     ->has(
                         OrderDetail::factory()
@@ -47,8 +46,6 @@ class OrderSeeder extends Seeder
         $tableIds = Table::pluck('id')->shuffle();
         foreach ($tableIds as $idx => $tableId) {
             $isUnregisteredGuest = rand(1, 100) <= 20;
-            // $statuses = ['đang ăn', 'đã ăn', 'đã thanh toán'];
-            // $status = $statuses[random_int(0, count($statuses) - 1)];
             $paid = rand(1, 100) <= 30;
             if (!$paid) {
                 Table::where('id', $tableId)->update([
@@ -63,7 +60,6 @@ class OrderSeeder extends Seeder
                         ->inRandomOrder()->first()?->id ?? User::factory(),
                 'created_at' => $date->addMinute(),
                 'paid' => $paid,
-                // 'status' => $status,
             ])
                 ->has(
                     OrderDetail::factory()

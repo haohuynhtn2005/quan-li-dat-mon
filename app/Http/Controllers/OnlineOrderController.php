@@ -19,29 +19,30 @@ class OnlineOrderController extends Controller
     public function index()
     {
         $status = request('status');
-    
+
         // Lấy danh sách đơn hàng, tính tổng tiền và kèm theo danh sách món ăn
         $onlineOrders = OnlineOrder::when($status, function ($query, $status) {
-                return $query->where('status', $status);
-            })
+            return $query->where('status', $status);
+        })
             ->with(['user', 'items.food']) // Lấy danh sách món ăn kèm theo thông tin từ bảng foods
             ->withSum('items', 'price') // Tính tổng tiền từ bảng items
+            ->latest()
             ->paginate(10);
-    
+
         return view('online_orders.index', compact('onlineOrders'));
     }
-    
-    
-    
+
+
+
 
     public function getOrderItems($id)
     {
         $items = OnlineOrderItem::where('order_id', $id)->get(['name', 'quantity', 'price']);
-    
+
         return response()->json($items);
     }
-    
-    
+
+
 
     public function store(Request $request)
     {
@@ -115,18 +116,18 @@ class OnlineOrderController extends Controller
         ], [
             'reason.required_if' => 'Vui lòng nhập lý do khi từ chối đơn hàng!',
         ]);
-    
+
         $order = OnlineOrder::findOrFail($id);
         $order->status = $request->status;
         $order->reason = $request->status === 'không nhận' ? $request->reason : null;
         $order->save();
-    
+
         return redirect()->back()->with('success', 'Cập nhật trạng thái thành công!');
     }
-    
-    
 
-    
+
+
+
 
     /**
      * Show the form for editing the specified resource.
@@ -152,22 +153,22 @@ class OnlineOrderController extends Controller
         //
     }
     public function cancel($id)
-{
-    $order = OnlineOrder::find($id);
+    {
+        $order = OnlineOrder::find($id);
 
-    if (!$order) {
-        return redirect()->back()->with('error', 'Đơn hàng không tồn tại.');
+        if (!$order) {
+            return redirect()->back()->with('error', 'Đơn hàng không tồn tại.');
+        }
+
+        // Kiểm tra nếu trạng thái đơn hàng có thể hủy được
+        if ($order->status !== 'chờ xác nhận') {
+            return redirect()->back()->with('error', 'Chỉ có thể hủy đơn hàng khi đang chờ xác nhận.');
+        }
+
+        $order->status = 'đã hủy';
+        $order->save();
+
+        return redirect()->back()->with('success', 'Đơn hàng đã bị hủy thành công.');
     }
-
-    // Kiểm tra nếu trạng thái đơn hàng có thể hủy được
-    if ($order->status !== 'chờ xác nhận') {
-        return redirect()->back()->with('error', 'Chỉ có thể hủy đơn hàng khi đang chờ xác nhận.');
-    }
-
-    $order->status = 'đã hủy';
-    $order->save();
-
-    return redirect()->back()->with('success', 'Đơn hàng đã bị hủy thành công.');
-}
 
 }

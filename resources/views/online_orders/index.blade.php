@@ -85,7 +85,8 @@ th, td {
             <form method="POST" action="{{ route('online_orders.update_status', $order->id) }}" class="status-form">
               @csrf
               @method('PATCH')
-              <select name="status" class="status-select" data-order-id="{{ $order->id }}">
+              <select name="status" data-order-id="{{ $order->id }}"
+                class="form-control form-control-sm" style="width: fit-content;">
                 @foreach($statuses as $status)
                   <option value="{{ $status }}" @if($order->status == $status) selected @endif>
                     {{ Str::ucfirst($status) }}
@@ -145,6 +146,10 @@ th, td {
         @endforeach
       </tbody>
     </table>
+    {{-- Pagination --}}
+    <div class="d-flex justify-content-center">
+      {{ $onlineOrders->appends(request()->query())->links() }}
+    </div>
   </div>
   
 @endsection
