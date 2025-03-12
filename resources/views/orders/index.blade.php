@@ -117,6 +117,48 @@
             <td>
               <a href="{{ route('orders.show', [$order, ...request()->query()]) }}"
                 class="btn btn-sm btn-info">Đặt</a>
+              <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#staticBackdrop{{ $order->id }}">
+                Hóa đơn
+              </button>
+              <div class="modal fade" id="staticBackdrop{{ $order->id }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="staticBackdropLabel">Hóa đơn {{ $order->id }}</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Bàn:</strong> {{ $order->table->name }}</p>
+                        <p><strong>Khách:</strong> {{ $order->user->name }}</p>
+                        <table>
+                            <tr>
+                                <th>Món</th>
+                                <th>SL</th>
+                                <th>Giá</th>
+                                <th>Tổng</th>
+                            </tr>
+                            @foreach ($order->bill['items'] as $item)
+                            <tr>
+                                <td>{{ $item['food_item'] }}</td>
+                                <td>{{ $item['quantity'] }}</td>
+                                <td>{{ number_format($item['price']) }}</td>
+                                <td>{{ number_format($item['subtotal']) }}</td>
+                            </tr>
+                            @endforeach
+                        </table>
+
+                        <p><strong>Tổng:</strong> {{ number_format($order->bill['total_price']) }}₫</p>
+                        <p><strong>Giảm giá:</strong> {{ number_format($order->bill['discount']) }}%</p>
+                        <p><strong>Thành tiền:</strong> {{ number_format($order->bill['final_amount']) }}₫</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-primary btn-sm" data-dismiss="modal">Ok</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
               @if (!$order->paid)
                 <button class="btn btn-sm btn-success"
                   onclick="showPaymentModal({{ $order->id }}, {{ ($order->total / 100) * (100 - $order->discount) }})">
