@@ -81,9 +81,9 @@
                             <td>{{ $order->phone }}</td>
                             <td>{{ $order->address }}</td>
                             <td>{{ $order->status }}</td>
-                            <td>{{ $order->status == 'không nhận' ? $order->li_do : '-' }}</td>
+                            <td>{{ $order->status == 'không nhận' ? $order->reason : '-' }}</td>
                             <td>{{ $order->created_at }}</td>
-                            <td>{{ $order->da_thanh_toan?'Đã thanh toán':'Chưa thanh toán' }}</td>
+                            <td>{{ $order->paid ? 'Đã thanh toán':'Chưa thanh toán' }}</td>
                             <td>
                                 <form action="{{ route('online_orders.cancel', $order->id) }}" method="POST" class="d-inline">
                                     @csrf

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\OnlineOrder;
+use App\Models\OnlineOrderItem;
 use App\Models\Table;
 use App\Models\User;
 use Carbon\Carbon;
@@ -10,27 +11,47 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class OnlineOrderSeeder extends Seeder{
+class OnlineOrderSeeder extends Seeder
+{
     public function run()
     {
-        $data = [];
-        $now = Carbon::now();
+        $startDate = Carbon::create(2024, 1, 1);
+        $endDate = Carbon::now()->subDay();
+        $totalDays = $startDate->diffInDays($endDate);
 
-        for ($i = 1; $i <= 300; $i++) {
-            $randomDate = Carbon::create(2024, 6, 1)->addDays(rand(0, $now->diffInDays(Carbon::create(2024, 6, 1))));
-            
-            $data[] = [
-                'user_id' => rand(1, 27),
-                'phone' => '09876543' . rand(10, 99),
-                'address' => 'Địa chỉ mẫu ' . $i,
-                'status' => rand(0, 1),
-                'reason' => 'Lý do đơn hàng ' . $i,
-                'paid' => $randomDate->isToday() ? 0 : 1, // Chỉ đơn hôm nay chưa thanh toán
-                'created_at' => $randomDate,
-                'updated_at' => $randomDate,
-            ];
+        for ($i = 0; $i <= $totalDays; $i++) {
+            $currentDate = $startDate->copy()->addDays($i);
+            $orderCount = rand(1, 3);
+            for ($j = 0; $j < $orderCount; $j++) {
+                $userId = User::where('role', '=', 'user')->inRandomOrder()->first()?->id;
+                $onlineOrder = OnlineOrder::factory()->state([
+                    'user_id' => $userId,
+                    'created_at' => $currentDate,
+                    'paid' => true,
+                    'status' => 'đã giao',
+                    'reason' => null,
+                ])->create();
+                OnlineOrderItem::factory()
+                    ->count(rand(3, 5))
+                    ->state(['order_id' => $onlineOrder->id, 'created_at' => $currentDate])
+                    ->create();
+            }
         }
 
-        DB::table('online_orders')->insert($data);
+        $date = Carbon::now()->subDay();
+        for ($i = 0; $i < 10; $i++) {
+            $user = User::where('role', '=', 'user')->inRandomOrder()->first()?->id;
+            $onlineOrder = OnlineOrder::factory()->state([
+                'user_id' => $user,
+                'created_at' => $date->addMinute(),
+                'paid' => rand(0, 1),
+                'status' => collect(['chờ xác nhận', 'đã xác nhận', 'không nhận', 'đã giao', 'đã hủy'])->random(),
+            ])->create();
+
+            OnlineOrderItem::factory()
+                ->count(rand(3, 5))
+                ->state(['order_id' => $onlineOrder->id, 'created_at' => $currentDate])
+                ->create();
+        }
     }
 }

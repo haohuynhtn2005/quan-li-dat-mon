@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
       FoodItemSeeder::class,
       OrderSeeder::class,
       CartSeeder::class,
+      OnlineOrderSeeder::class,
     ]);
 
     // // Seed Departments
