@@ -37,7 +37,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
     Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
     Route::post('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
-    Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
+    Route::get('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
     Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
     Route::post('/cart/checkout', [OnlineOrderController::class, 'store'])->name('cart.processCheckout');
     Route::delete('/online_orders/cancel/{id}', action: [OnlineOrderController::class, 'cancel'])->name('online_orders.cancel');

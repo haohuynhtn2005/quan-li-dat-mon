@@ -12,7 +12,7 @@ class DashboardController extends Controller
 {
     public function overview()
     {
-        $userCount = User::count();
+        $userCount = User::where('role', '=', 'user')->count();
         $tableCount = Table::count();
         $foodTypeCount = FoodType::count();
         $foodItemCount = FoodItem::count();
