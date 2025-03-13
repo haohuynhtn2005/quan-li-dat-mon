@@ -41,7 +41,7 @@
          <div class=" bg-dark p-2 bg-opacity-50">
         <ul class="nav nav-tabs mb-4" id="foodTabs">
             <li class="nav-item">
-                <button class="nav-link active text-light" data-food-type="all">Tất cả</button>
+                <button class="nav-link active" data-food-type="all">Tất cả</button>
             </li>
             @foreach($foodTypes as $type)
             <li class="nav-item">

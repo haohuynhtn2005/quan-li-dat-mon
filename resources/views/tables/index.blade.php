@@ -30,18 +30,10 @@
                   <th>ID</th>
                   <th>Tên</th>
                   <th>Số chỗ</th>
-                  <td>Trạng thái</td>
+                  <th>Trạng thái</th>
                   <th>Thao tác</th>
                 </tr>
               </thead>
-              <tfoot>
-                <tr>
-                  <th>ID</th>
-                  <th>Tên</th>
-                  <th>Số chỗ</th>
-                  <th>Thao tác</th>
-                </tr>
-              </tfoot>
               <tbody>
                 @foreach ($tables as $table)
                   <tr>

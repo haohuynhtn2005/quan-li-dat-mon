@@ -23,15 +23,19 @@
     $statuses = ['đang ăn', 'đã ăn', 'đã thanh toán'];
   @endphp
   <form method="GET" action="{{ route('orders.index') }}">
-    <select name="status" onchange="this.form.submit()"
+    <select name="paid" onchange="this.form.submit()"
       class="form-control form-control-sm mb-1" style="width: fit-content;">
       <option value="">Tất cả</option>
-      @foreach ($statuses as $status)
-        <option value="{{ urlencode($status) }}"
-          @if (urldecode(request('status')) == $status) selected @endif>
-          {{ Str::ucfirst($status) }}
+      {{-- @foreach ($statuses as $status) --}}
+        <option value="true"
+          @if (urldecode(request('paid')) == 'true') selected @endif>
+          Đã thanh toán
         </option>
-      @endforeach
+        <option value="false"
+          @if (urldecode(request('paid')) == 'false') selected @endif>
+          Chưa thanh toán
+        </option>
+      {{-- @endforeach --}}
     </select>
   </form>
 
@@ -131,7 +135,7 @@
                     </div>
                     <div class="modal-body">
                         <p><strong>Bàn:</strong> {{ $order->table->name }}</p>
-                        <p><strong>Khách:</strong> {{ $order->user->name }}</p>
+                        <p><strong>Khách:</strong> {{ $order->user ? $order->user->name : 'Khách vãng lai'}}</p>
                         <table>
                             <tr>
                                 <th>Món</th>

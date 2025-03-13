@@ -18,9 +18,10 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $query = Order::with(['user', 'table'])->latest();
-        $status = $request->has('status') ? urldecode(request('status')) : null;
-        if (in_array($status, ['đang ăn', 'đã ăn', 'đã thanh toán'])) {
-            $query->where('status', $status);
+        $paid = $request->has('paid') ? urldecode(request('paid')) : null;
+        if ($paid) {
+            $paid = $paid == 'true';
+            $query->where('paid', $paid);
         }
         $orders = $query->paginate(10)->appends($request->query());
         return view('orders.index', compact('orders'));
@@ -122,6 +123,9 @@ class OrderController extends Controller
     {
         try {
             $order->delete();
+            Table::where('id', $order->table_id)->update([
+                'status' => 'trống',
+            ]);
             return redirect()->route('orders.index')->with('success', 'Đã xóa.');
         } catch (\Exception $e) {
             return redirect()->route('orders.index')->with('error', 'Lỗi xóa đơn.');

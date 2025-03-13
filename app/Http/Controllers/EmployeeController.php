@@ -30,10 +30,9 @@ class EmployeeController extends Controller
 
   public function create()
   {
-    $departments = Department::get();
+    // $departments = Department::get();
     return view('employees.form')->with([
       'mode' => 'create',
-      'departments' => $departments,
     ]);
   }
 
@@ -64,13 +63,12 @@ class EmployeeController extends Controller
 
   public function edit($id)
   {
-    $departments = Department::get();
+    // $departments = Department::get();
 
     $employee = User::whereNotIn('role', ['admin', 'user'])->findOrFail($id);
     return view('employees.form', [
       'mode' => 'update',
       'employee' => $employee,
-      'departments' => $departments,
     ]);
   }
 
